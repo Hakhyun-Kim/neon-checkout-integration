@@ -14,34 +14,26 @@ Companion documentation for the Neon checkout integration built into
 ## The whole thing on one page
 
 ```mermaid
-flowchart TB
+flowchart LR
     subgraph GAME["🎮 Game client — untrusted"]
-        STORE["Store UI<br/>src/app/neon-store.js"]
+        STORE["Store UI"]
     end
 
-    subgraph SRV["🔒 Your server — trusted"]
-        API["store-api.mjs<br/>routes · country · signature"]
-        CATALOG["catalog.mjs<br/>SKU allowlist · price"]
-        LEDGER[("repository.mjs<br/>intents · entitlements<br/>idempotency")]
+    subgraph SRV["🔒 Your server — trusted<br/>owns price · country · entitlements"]
+        API["Store API<br/>+ ledger"]
     end
 
     subgraph NEON["💳 Neon"]
-        CHECKOUT["POST /checkout"]
-        HOSTED["Hosted payment page"]
+        HOSTED["Checkout API<br/>+ hosted payment page"]
     end
 
-    STORE -->|"① { sku, locale }<br/>never a price"| API
-    API --> CATALOG
-    API -->|"② X-API-KEY + price"| CHECKOUT
-    CHECKOUT -->|"③ redirectUrl"| API
-    API -->|"④ record intent"| LEDGER
-    API --> STORE
-    STORE -->|"⑤ player pays"| HOSTED
-
-    HOSTED -.->|"⑥a redirect — fast,<br/>no authority"| STORE
-    NEON ==>|"⑥b purchase.completed<br/>signed · authoritative"| API
-    API ==>|"⑦ grant"| LEDGER
-    STORE -->|"⑧ poll until owned"| API
+    STORE -->|"① sku + locale — never a price"| API
+    API -->|"② X-API-KEY + server-owned price"| HOSTED
+    HOSTED -->|"③ redirectUrl"| STORE
+    STORE -->|"④ player pays"| HOSTED
+    HOSTED -.->|"⑤ redirect — grants nothing"| STORE
+    HOSTED ==>|"⑥ signed purchase.completed"| API
+    STORE -->|"⑦ poll until owned"| API
 ```
 
 **The one rule everything else follows:** the dotted arrow grants nothing. Neon's
