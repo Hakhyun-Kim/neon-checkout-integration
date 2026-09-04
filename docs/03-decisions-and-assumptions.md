@@ -157,7 +157,7 @@ Honest list. None of it blocks the demo; all of it is known.
 
 | Gap | Impact |
 |---|---|
-| No refund / dispute handling | `refund.processed` and `dispute.opened` are acknowledged and ignored; entitlements are never revoked. Needs the event shapes confirmed first — see [05](05-open-questions-for-neon.md). |
+| No dispute handling | `dispute.opened` is version 1 and carries only a `purchaseId` — no account, no items. Revoking on open versus on an unfavourable close is a studio policy call, and the `dispute.closed` outcome field is still unverified. Refunds are handled. |
 | Amount check is partial | Verified when settlement currency equals the currency the checkout was created in. If the player switches country on the hosted page, the purchase is recorded with a `currencySwitched` flag rather than re-verified. |
 | `taxCode` / `bundleContents` removed | They were being sent without confirmation in the checkout request reference. Removed rather than guessed; now a question instead of an assumption. |
 | No real accounts | Player identity is an `HttpOnly` cookie. Clearing cookies loses entitlements. A real title would use its own player id plus `POST /auth/token`. |

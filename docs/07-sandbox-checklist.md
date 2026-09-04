@@ -115,10 +115,14 @@ the happy path works.
 **F1. Replay.** Re-send the same delivery from the Console. Expected: `200`,
 `.data/neon-store.json` still shows exactly one entry in `purchases`.
 
-**F2. Refund.** Issue a refund from the Console. Expected today: `200` with
-`{"ignored":"unhandled type: refund.processed"}` — the entitlement is *not*
-revoked. This is a known, documented gap; confirming the event shape here is what
-lets it be implemented properly.
+**F2. Refund.** Issue a refund from the Console. Expected: `200` with
+`{"revoked":true}`, the log line `refund webhook revoked …`, the checkout flipped
+to `status: "refunded"`, the purchase record kept but stamped with `refundedAt`,
+and the banner gone from the game within a reload.
+
+This is the step most worth watching, because the documented example has
+`externalReferenceId: null` — so the lookup that has to work is the one by
+`purchaseId`. If revocation silently does nothing, that is where to look.
 
 **F3. Environment guard.** Temporarily set `NEON_ENVIRONMENT=production` and buy
 again. Expected: `200` with `{"ignored":"environment mismatch: isSandbox=true"}`
