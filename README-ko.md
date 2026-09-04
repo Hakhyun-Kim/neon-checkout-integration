@@ -84,3 +84,4 @@ npm run serve
 | [05 — Open questions](docs/05-open-questions-for-neon.md) | Neon에 확인이 필요한 항목 |
 | [06 — AI usage](docs/06-ai-usage.md) | 도구 · 역할 분담 · 검증 방법 |
 | [07 — Sandbox checklist](docs/07-sandbox-checklist.md) | 샌드박스 실행 절차 |
+| [08 — Storage & identity](docs/08-storage-and-identity.md) | 저장소·신원 결정과 버린 대안들 |

@@ -70,6 +70,7 @@ to get a first real purchase through.
 | [05 — Open questions for Neon](docs/05-open-questions-for-neon.md) | What is worth asking before a production launch |
 | [06 — How AI was used](docs/06-ai-usage.md) | Tooling, division of labour, verification |
 | [07 — Sandbox checklist](docs/07-sandbox-checklist.md) | Every Console and local step to run a real sandbox purchase |
+| [08 — Storage & identity](docs/08-storage-and-identity.md) | Two late decisions, how each is verified, and every alternative that was dropped |
 | [README-ko.md](README-ko.md) | 한국어 구현 요약 |
 
 The server is a REST client, not an SDK binding — Neon publishes no Unity or
