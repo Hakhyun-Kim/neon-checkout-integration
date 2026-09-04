@@ -11,6 +11,44 @@ Companion documentation for the Neon checkout integration built into
 | **Runtime** | Node.js (no dependencies), static browser client, esbuild bundle |
 | **Test** | `npm run store:check` — signed webhook, replay, and tamper coverage |
 
+## The whole thing on one page
+
+```mermaid
+flowchart TB
+    subgraph GAME["🎮 Game client — untrusted"]
+        STORE["Store UI<br/>src/app/neon-store.js"]
+    end
+
+    subgraph SRV["🔒 Your server — trusted"]
+        API["store-api.mjs<br/>routes · country · signature"]
+        CATALOG["catalog.mjs<br/>SKU allowlist · price"]
+        LEDGER[("repository.mjs<br/>intents · entitlements<br/>idempotency")]
+    end
+
+    subgraph NEON["💳 Neon"]
+        CHECKOUT["POST /checkout"]
+        HOSTED["Hosted payment page"]
+    end
+
+    STORE -->|"① { sku, locale }<br/>never a price"| API
+    API --> CATALOG
+    API -->|"② X-API-KEY + price"| CHECKOUT
+    CHECKOUT -->|"③ redirectUrl"| API
+    API -->|"④ record intent"| LEDGER
+    API --> STORE
+    STORE -->|"⑤ player pays"| HOSTED
+
+    HOSTED -.->|"⑥a redirect — fast,<br/>no authority"| STORE
+    NEON ==>|"⑥b purchase.completed<br/>signed · authoritative"| API
+    API ==>|"⑦ grant"| LEDGER
+    STORE -->|"⑧ poll until owned"| API
+```
+
+**The one rule everything else follows:** the dotted arrow grants nothing. Neon's
+documentation states the player can reach `successUrl` before the webhook lands,
+so the redirect only starts polling and the signed webhook is the sole writer of
+entitlements.
+
 ## Why a separate repository
 
 The game is a large pre-existing codebase (3D renderer, deterministic combat

@@ -50,6 +50,37 @@ The resolution here is a strict split:
   the webhook is slower than that, the entitlement still lands server-side and
   appears on the next page load. The purchase is never lost, only late.
 
+## The life of one purchase
+
+Every path a checkout intent can take. Only one of them grants anything, and the
+ledger can name which state any purchase is in at any moment.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending: POST /api/store/checkout — intent recorded<br/>with account, sku, price, currency
+
+    Pending --> Fulfilled: signed webhook matches the intent
+    Pending --> Abandoned: player never pays<br/>(pruned after 30 days)
+
+    Fulfilled --> Fulfilled: same event.id again<br/>200 duplicate, no-op
+
+    Pending --> Ignored: account / sku / amount<br/>disagree with the intent
+    Fulfilled --> Ignored: a different event points at<br/>an already-granted checkout
+
+    Ignored --> [*]: 200 + logged reason<br/>no retry, no grant
+    Fulfilled --> [*]: entitlement written<br/>client poll sees it
+    Abandoned --> [*]
+
+    note right of Pending
+        The redirect can land here
+        before the webhook does.
+        It grants nothing.
+    end note
+```
+
+`Ignored` is a deliberate destination rather than an error path — see the response
+codes below. Reaching it always leaves a log line saying why.
+
 ## Webhook verification, step by step
 
 1. Read the **raw request bytes** — not a re-serialized object. The HMAC is over

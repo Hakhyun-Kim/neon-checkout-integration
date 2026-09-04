@@ -36,17 +36,27 @@ is what lets the project's Node verification scripts keep running.
 
 ## Trust boundary
 
+```mermaid
+flowchart LR
+    subgraph UNTRUSTED["🌐 Browser — untrusted"]
+        direction TB
+        CL["src/app/neon-store.js<br/><br/>sends sku, locale<br/>never sends price, currency,<br/>country, entitlement<br/>holds HttpOnly cookie id"]
+    end
+
+    subgraph TRUSTED["🔒 Server — trusted"]
+        direction TB
+        SV["server/*.mjs<br/><br/>owns price, currency, country,<br/>SKU allowlist, entitlement grant<br/>holds NEON_API_KEY,<br/>NEON_WEBHOOK_SECRET"]
+    end
+
+    NEON["Neon"]
+
+    CL -->|"POST /checkout<br/>{ sku, locale }"| SV
+    SV -->|"GET /entitlements<br/>{ what you own }"| CL
+    SV -->|"POST /checkout<br/>X-API-KEY"| NEON
+    NEON ==>|"purchase.completed<br/>x-neon-digest"| SV
 ```
-┌─ browser (untrusted) ─────────────┐      ┌─ server (trusted) ──────────────┐
-│ src/app/neon-store.js             │      │ server/*.mjs                    │
-│                                   │      │                                 │
-│ sends:  { sku, locale, country }  │─────▶│ owns:  price, currency,         │
-│ never sends: price, entitlement   │      │        SKU allowlist,           │
-│ reads:  /api/store/entitlements   │◀─────│        entitlement grant        │
-│ holds:  cookie player id only     │      │ holds: NEON_API_KEY,            │
-└───────────────────────────────────┘      │        NEON_WEBHOOK_SECRET      │
-                                           └─────────────────────────────────┘
-```
+
+The double line is the only edge that can create an entitlement.
 
 Three rules follow from this and are enforced in code:
 
@@ -56,6 +66,26 @@ Three rules follow from this and are enforced in code:
 2. **Entitlements are granted only by a verified webhook.** Neither the browser
    redirect nor the client's own claim of success can grant anything.
 3. **Secrets stay in the process.** Nothing in `dist/game.js` references a key.
+
+## How a request moves through the code
+
+Which file owns which step, for anyone tracing a bug back to its source.
+
+```mermaid
+flowchart TD
+    REQ([Request arrives]) --> SERVE["scripts/serve.mjs<br/>static files + mounts the API"]
+    SERVE -->|"/api/*"| API["server/store-api.mjs<br/>routes, cookie identity,<br/>country resolution, signature"]
+    SERVE -->|"anything else"| STATIC([Static file])
+
+    API -->|"catalog · checkout"| CAT["server/catalog.mjs<br/>SKU allowlist, market table,<br/>server-owned price"]
+    API -->|"create checkout"| NC["server/neon-client.mjs<br/>POST /checkout"]
+    API -->|"record · fulfil · read"| REPO["server/repository.mjs<br/>ledger, idempotency,<br/>permanent vs transient"]
+    REPO --> FILE[(".data/neon-store.json")]
+```
+
+`store-api.mjs` is the only file that touches HTTP; `repository.mjs` is the only
+file that decides whether something is granted. Keeping those separate is what
+lets the whole fulfillment path be tested without a network.
 
 ## Data model
 
