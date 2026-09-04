@@ -107,8 +107,10 @@ Named here so scope is a decision rather than an omission.
 - **Storefront / webshop** — out of scope for this integration.
 - **Embedded and Direct checkout** — the same server endpoints support both; only
   Hosted is wired to the UI. See [03](docs/03-decisions-and-assumptions.md).
-- **Refund and dispute handling** — `refund.processed` and `dispute.opened` exist
-  in Neon's event catalogue but no entitlement revocation is implemented.
+- **Dispute handling** — `dispute.opened` arrives as version 1 carrying only a
+  `purchaseId`, and whether a chargeback should revoke on open or on close is a
+  product policy decision rather than a technical one. Refunds *are* handled:
+  `refund.processed` revokes the entitlement.
 - **Durable storage** — fulfillment writes a single JSON file behind a queue.
   Production needs a transactional store; the interface is one file wide.
 - **Real accounts** — the player identity is an `HttpOnly` cookie, not a login.

@@ -17,10 +17,12 @@ documentation did not settle.
    `purchase.completed` whose `externalReferenceId` is unknown to us (which, if it
    ever happens, is unrecoverable by retry).
 
-3. **Refund and dispute semantics.** For `refund.processed`, `dispute.opened`, and
-   `dispute.closed`: are they delivered to the same listener, do they carry the
-   original `externalReferenceId`, and is partial refund possible on a single-item
-   purchase? Entitlement revocation cannot be designed without this.
+3. **Dispute semantics, and partial refunds.** Refunds are now handled — see the
+   answered section below. What is still open: `dispute.opened` is version 1 and
+   carries only a `purchaseId`, so does `dispute.closed` report an outcome we can
+   act on, and is the merchant expected to revoke on open or on an unfavourable
+   close? Separately, can a single-item purchase be partially refunded, and if so
+   what does `items[].quantity` look like?
 
 4. **KR payment methods.** Which Korean rails are live today (카카오페이,
    네이버페이, 토스, carrier billing, 상품권), and does the set differ by checkout
