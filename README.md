@@ -72,6 +72,7 @@ to get a first real purchase through.
 | [07 — Sandbox checklist](docs/07-sandbox-checklist.md) | Every Console and local step to run a real sandbox purchase |
 | [08 — Storage & identity](docs/08-storage-and-identity.md) | Two late decisions, how each is verified, and every alternative that was dropped |
 | [09 — Sandbox run](docs/09-sandbox-run.md) | A live run: two real purchases fulfilled, what it answered, and the refund defect that blocked the rest |
+| [Evidence](docs/evidence/) | Screenshots and a 15-second walkthrough of the live run |
 | [README-ko.md](README-ko.md) | 한국어 구현 요약 |
 
 The server is a REST client, not an SDK binding — Neon publishes no Unity or
