@@ -85,3 +85,4 @@ npm run serve
 | [06 — AI usage](docs/06-ai-usage.md) | 도구 · 역할 분담 · 검증 방법 |
 | [07 — Sandbox checklist](docs/07-sandbox-checklist.md) | 샌드박스 실행 절차 |
 | [08 — Storage & identity](docs/08-storage-and-identity.md) | 저장소·신원 결정과 버린 대안들 |
+| [09 — Sandbox run](docs/09-sandbox-run.md) | 샌드박스 실거래 기록 · 확인된 것 · 환불 장애 리포트 |

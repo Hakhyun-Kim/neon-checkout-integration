@@ -4,6 +4,11 @@ Questions worth sending to Neon before taking this to production, grouped by
 whether they block a launch. Everything here is something the published
 documentation did not settle.
 
+> Several of these were answered by the live sandbox run — payment methods, tax
+> treatment, settlement fees, the checkout response shape, and partial-refund
+> mechanics. See [09 — Sandbox run](09-sandbox-run.md), which also carries a
+> defect report for refunds failing server-side in sandbox.
+
 ## Blocking
 
 1. **Sandbox lifecycle.** Is there a dedicated sandbox environment or key prefix,
