@@ -124,6 +124,33 @@ Neither alone is enough.
 
 ### 3.4 Answer correctly
 
+This is the decision most integrations get wrong, so it is worth drawing. Neon
+retries any non-2xx for up to 36 hours — so the question is never "did this
+succeed?", it is **"could a retry ever change the answer?"**
+
+```mermaid
+flowchart TD
+    W([Webhook arrives]) --> SIG{"x-neon-digest<br/>verifies?"}
+    SIG -->|no| F403["403<br/>misconfiguration — stay noisy"]
+    SIG -->|yes| SHAPE{"type, version,<br/>isSandbox, status<br/>all as expected?"}
+
+    SHAPE -->|no| IGN["200 ignored: reason<br/>plus a log line"]
+    SHAPE -->|yes| INTENT{"matches a recorded<br/>intent — account, sku,<br/>quantity, amount?"}
+
+    INTENT -->|no| IGN
+    INTENT -->|yes| DUP{"already seen<br/>this event.id, or<br/>already fulfilled?"}
+
+    DUP -->|yes| OK200["200 duplicate<br/>no second grant"]
+    DUP -->|no| WRITE{"entitlement<br/>written?"}
+
+    WRITE -->|storage failed| F5XX["5xx<br/>a retry genuinely helps"]
+    WRITE -->|yes| OK["200 received"]
+```
+
+Everything reaching `200 {ignored}` is permanent: no retry will ever make an
+unknown reference known, or a sandbox event belong in production. Only the
+storage branch earns a `5xx`.
+
 ```js
 // PermanentRejection → 200. Neon retries non-2xx for up to 36 hours,
 // and none of the conditions above will ever pass on a retry.
