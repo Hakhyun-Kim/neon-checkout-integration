@@ -40,8 +40,11 @@ and check **Owned** and the HUD flag. Use a fresh browser identity if already ow
 
 For Neon sandbox setup, follow [07 — Sandbox checklist](docs/07-sandbox-checklist.md).
 The [recorded sandbox run](docs/09-sandbox-run.md) documents two completed purchases
-and signed fulfillment. Real sandbox refunds remain unverified: the recorded
-attempts returned HTTP 500. Synthetic refund tests are separate evidence.
+and signed fulfillment — and, as of 2026-09-06, a **real sandbox refund**: the
+empty-body refund still 500s (a reported vendor bug), but the item-level body
+succeeds, and the `refund.processed` webhook revoked the entitlement about one
+second later. Details and the exact body shape are in the
+[resolution addendum](docs/09-sandbox-run.md).
 
 ## Design
 

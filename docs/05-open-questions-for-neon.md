@@ -12,9 +12,14 @@ ones. These are the questions that still affect production behavior.
    purchase arrives without a matching local intent, or checkout creation returns
    an uncertain network result? The current implementation logs unknown purchase
    references and retains early refunds by purchase ID.
-3. **Refunds and disputes.** The recorded sandbox refund attempts returned 500
-   ([09](09-sandbox-run.md)). When that is resolved, verify a real refund event and
-   partial-refund semantics. Define whether disputes revoke on open or final loss.
+3. **Refunds and disputes.** Partially resolved 2026-09-06 ([09](09-sandbox-run.md)
+   addendum): item-level refunds (`{"items":[{"itemId": purchase.items[].id,
+   "quantity": n}]}`) succeed, and a real `refund.processed` revoked the
+   entitlement end to end. Still for Neon: the **empty-body full-refund path
+   returns 500** in sandbox (Console and API alike), and the purchase object
+   names the id `items[].id` while the refund request wants `itemId`. Disputes
+   remain untriggerable from the merchant side — define whether they revoke on
+   open or final loss.
 4. **Production operations.** Confirm secret rotation overlap, outbound API rate
    limits, and supported reconciliation/monitoring procedures.
 5. **Market rollout.** Confirm currently enabled Korean payment methods for the
