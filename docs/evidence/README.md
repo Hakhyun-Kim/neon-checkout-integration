@@ -8,6 +8,11 @@ The checkout token in the address bar of the second image is masked. It is a
 sandbox value and harmless, but a payments repository is not the place to leave
 one lying around.
 
+## The guided tour, step by step
+
+Thirteen screenshots of `?tour=neon`, one per step, in [tour/](tour/) — the
+payment lifecycle explained on the game screen with live server responses.
+
 ## Walkthrough
 
 ![Walkthrough](walkthrough.gif)

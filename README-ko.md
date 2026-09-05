@@ -65,6 +65,16 @@ npm run serve
 `http://127.0.0.1:8642`를 열고 **별빛 상점**에서 구매하면 됩니다. 모의 모드는
 같은 원장과 같은 멱등 지급 경로를 쓰고, Neon만 호출하지 않습니다.
 
+**안내 투어** — 게임이 스스로 플레이하는 동안 결제 수명 전체(위조 서명 403 → 지급 →
+계정 인계 → 재전송 → 이중구매 409 → 환불 회수 → 환불 뒤 지급 거절)를 13단계로
+실연합니다. 화면의 JSON은 전부 방금 서버가 준 실제 응답입니다:
+
+```
+http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
+```
+
+단계별 스크린샷: [docs/evidence/tour/](docs/evidence/tour/)
+
 샌드박스 연결 절차는 [docs/07-sandbox-checklist.md](docs/07-sandbox-checklist.md)에
 단계별로 있습니다.
 
@@ -85,6 +95,6 @@ npm run serve
 | [06 — AI usage](docs/06-ai-usage.md) | 도구 · 역할 분담 · 검증 방법 |
 | [07 — Sandbox checklist](docs/07-sandbox-checklist.md) | 샌드박스 실행 절차 |
 | [08 — Storage & identity](docs/08-storage-and-identity.md) | 저장소·신원 결정과 버린 대안들 |
+| [09 — Sandbox run](docs/09-sandbox-run.md) | 샌드박스 실거래 기록 · 확인된 것 · 환불 장애 리포트 |
 | [10 — What this proves](docs/10-what-this-proves.md) | 단계별로 무엇이 증명됐고 무엇이 아닌지 |
 | [11 — Accounts & saves](docs/11-accounts-and-saves.md) | 인계 코드 · 서버 저장본 · 충돌 처리 |
-| [09 — Sandbox run](docs/09-sandbox-run.md) | 샌드박스 실거래 기록 · 확인된 것 · 환불 장애 리포트 |
