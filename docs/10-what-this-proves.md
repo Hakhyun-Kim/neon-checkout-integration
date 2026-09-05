@@ -1,5 +1,7 @@
 # 10 — What this proves, stage by stage
 
+> Current implementation and verification limits: [12 — Review](12-review.md).
+
 A claims ledger. Each stage says what it demonstrates, what evidence backs it, and
 what it deliberately does not cover. The point of separating them is that "it
 works" is five different claims, and they were earned at different times by

@@ -1,5 +1,7 @@
 # 00 — Integration guide (start here)
 
+> Current implementation and verification limits: [12 — Review](12-review.md).
+
 For an engineer putting Neon checkout into their own game. This walks the whole
 flow once, then hands you the parts worth copying and the six ways it goes wrong.
 
@@ -47,8 +49,7 @@ is enabled for your account. Both fail as a generic checkout rejection.
 
 ## 3. The minimum viable server
 
-Four endpoints. In the reference implementation this is about 350 lines with no
-runtime dependencies.
+Four endpoints form the checkout core. The full service also includes account, save and Firestore functionality.
 
 | Method | Path | Job |
 |---|---|---|
@@ -109,7 +110,7 @@ const ok = received.length === expected.length
 if (processedEvents[event.id]) return { duplicate: true };   // retries are normal
 const pending = checkouts[purchase.externalReferenceId];
 if (!pending)                          throw new PermanentRejection('unknown checkout reference');
-if (pending.status === 'fulfilled')    throw new PermanentRejection('checkout already fulfilled');
+if (pending.status !== 'pending')    throw new PermanentRejection('checkout already fulfilled');
 if (pending.accountId !== purchase.accountId) throw new PermanentRejection('account mismatch');
 if (pending.sku !== item.sku)          throw new PermanentRejection('sku mismatch');
 if (item.price !== pending.price)      throw new PermanentRejection('amount mismatch');
@@ -147,9 +148,7 @@ flowchart TD
     WRITE -->|yes| OK["200 received"]
 ```
 
-Everything reaching `200 {ignored}` is permanent: no retry will ever make an
-unknown reference known, or a sandbox event belong in production. Only the
-storage branch earns a `5xx`.
+Unsupported events and environment mismatches are acknowledged and logged. Unknown purchase references currently follow this policy too and need reconciliation before production. Unmapped refunds are retained by purchase ID; see [12](12-review.md).
 
 ```js
 // PermanentRejection → 200. Neon retries non-2xx for up to 36 hours,

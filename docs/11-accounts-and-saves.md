@@ -1,5 +1,7 @@
 # 11 — Accounts and server saves
 
+> Current implementation and verification limits: [12 — Review](12-review.md).
+
 Up to here the integration had one honest weakness, and it was written down in
 every document that touched identity: a player was a bearer credential bound to a
 device. Clear the browser and the purchase is gone. Buy on a phone and the desktop

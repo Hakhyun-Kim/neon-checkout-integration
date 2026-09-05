@@ -1,5 +1,7 @@
 # 01 — Architecture
 
+> Current implementation and verification limits: [12 — Review](12-review.md).
+
 ## The constraint that shaped everything
 
 Constellation Defense was, before this work, a **100% static browser game**. It
@@ -30,7 +32,7 @@ constellation-defense/
 └── .env.example                    configuration surface
 ```
 
-Total integration code is roughly 350 lines, no runtime dependencies. The game
+The checkout core has since grown to include accounts, saves and a Firestore backend. The game
 engine (`src/engine/`) is untouched — it stays DOM-free and deterministic, which
 is what lets the project's Node verification scripts keep running.
 
@@ -117,6 +119,5 @@ ledger. This is a deliberately small stand-in for a database; see
 
 `accountId` is a v4 UUID in an `HttpOnly; SameSite=Lax` cookie. Neon's model wants
 a stable in-game account id; this game has no accounts, so the cookie is the
-smallest honest substitute. It is `HttpOnly` specifically so the client script
-cannot forge or read it. In a real title this would be the game's own player id and
+smallest honest substitute. The cookie is HttpOnly, but the catalog also returns the same bearer ID and the client stores it in localStorage. Treat it as a credential, not a public identifier. In a real title this would be the game's own player id and
 would additionally be pinned with `POST /auth/token`.

@@ -5,8 +5,7 @@ real webhook delivery. Two purchases completed and were fulfilled. Refunds could
 not be tested end to end because every refund attempt failed server-side — that
 is written up as a defect report below, with the questions it raises.
 
-All identifiers here are sandbox values and are kept verbatim so the report is
-reproducible.
+Purchase identifiers are sandbox values. Account bearer credentials are redacted from current text; earlier history and screenshots were not rewritten.
 
 ---
 
@@ -20,13 +19,13 @@ reproducible.
 | Amount | `490000` KRW (₩4,900) | `490000` KRW |
 | Outcome | fulfilled by signed webhook | fulfilled by signed webhook |
 
-Server log, unedited:
+Server log (account bearer credentials redacted):
 
 ```
-[store] webhook fulfilled CELESTIAL_BANNER for 4bac1ed1-6144-41b7-b308-9b1a2229861b
+[store] webhook fulfilled CELESTIAL_BANNER for [sandbox-account-A]
 [store] webhook rejected: invalid signature
 [store] webhook rejected: invalid signature
-[store] webhook fulfilled CELESTIAL_BANNER for b9e0d4f0-e68d-425c-96de-a01a54ecdfd5
+[store] webhook fulfilled CELESTIAL_BANNER for [sandbox-account-B]
 ```
 
 The two rejections in the middle are a deliberate negative test: an unsigned and

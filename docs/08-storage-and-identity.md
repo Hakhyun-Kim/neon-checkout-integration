@@ -1,5 +1,7 @@
 # 08 — Storage and identity: two decisions, and the paths not taken
 
+> Current implementation and verification limits: [12 — Review](12-review.md).
+
 Two questions came up late, and both had answers that looked obvious and were
 wrong. This records what was chosen, how it is verified, and — because it is the
 more useful half — what was built or considered and then dropped.
