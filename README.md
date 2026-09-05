@@ -24,10 +24,13 @@ PowerShell: use `npm.cmd`. On Windows, double-click `start-demo.bat` after cloni
 to install/build and open the mock tour. It selects mock mode without overwriting
 an existing `.env`.
 
-Open [the English guided demo](http://127.0.0.1:8642/?lang=en&demo=expert&tour=neon&mute).
-Its 13 steps show pricing, checkout creation, forged-signature rejection,
-fulfillment, transfer, replay, ownership rejection, refund and a late grant.
-Pause or advance manually; automatic playback ends at step 13.
+Open [the English checkout inspector](http://127.0.0.1:8642/?lang=en&demo=expert&tour=neon&mute).
+It replaced the earlier scripted 13-step tour (2026-09-05): a panel observes
+the ordinary store while you buy — five stages advance from real store events,
+with source excerpts from the running build, live redacted HTTP evidence,
+three independently refundable castle cosmetics delivered on the 3D castle,
+and per-item test refunds. Purchases persist across reloads by design; use
+**Test refund** (or delete `.data/`) to reset.
 
 **Mock mode takes no payment and does not open Neon's hosted page.** It uses the
 same fulfillment/revocation repository methods but bypasses valid signature
@@ -71,19 +74,30 @@ sequenceDiagram
 - **Game impact:** additive UI, localization and startup wiring; no integration
   changes to `src/engine/`, `src/tactics/` or `src/balance/`.
 
-Accounts, saves, Firestore and the tour grew beyond the initial checkout example.
-The entire integration is not a 350-line SDK. See the
+Accounts, saves, Firestore and the inspector grew beyond the initial checkout
+example. The entire integration is not a 350-line SDK. See the
 [current review](docs/12-review.md) for portability boundaries and production gaps,
 including simultaneous pending purchases, cross-origin market selection and
 API-only saves.
 
+## Dedicated server mode
+
+The game also runs as an authoritative server process with every client — the
+web build, and Unity/Unreal samples — rendering its snapshots
+(`start-dedicated.bat` / `./start-dedicated.command`). The intended direction
+is for that server to become the only client-facing edge, brokering store
+operations to the payment service so payment features become server-side
+changes. Run instructions, the design, the current-vs-target payment topology
+and its honest status are in [13 — Dedicated server](docs/13-dedicated-server.md).
+
 ## Verify
 
 ```bash
-npm run store:check    # HTTP integration and real JSON write-failure regression
-npm run service:check  # API health and private-file isolation
-npm run tour:check     # bilingual tour contract
-npm run check          # all checks, build and asset budget
+npm run store:check      # HTTP integration and real JSON write-failure regression
+npm run service:check    # API health and private-file isolation
+npm run tour:check       # bilingual inspector contract
+npm run dedicated:check  # dedicated-server protocol: roles, schema, commands
+npm run check            # all checks, build and asset budget
 ```
 
 To include Firestore, start its emulator and set `FIRESTORE_EMULATOR_HOST` before
@@ -98,5 +112,6 @@ To include Firestore, start its emulator and set `FIRESTORE_EMULATOR_HOST` befor
 - [10 — Claims by development stage](docs/10-what-this-proves.md)
 - [11 — Accounts and saves](docs/11-accounts-and-saves.md)
 - [12 — Current review and limitations](docs/12-review.md)
+- [13 — Dedicated server](docs/13-dedicated-server.md)
 - [Earlier tour screenshots](docs/evidence/tour/) — historical, before this review
 - [한국어 요약](README-ko.md)
