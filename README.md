@@ -126,6 +126,11 @@ http://127.0.0.1:8642/?lang=en&demo=expert&tour=neon&mute
 
 Korean version: `http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute`
 
+**First step draws the whole flow** — client → server → Neon, the dotted redirect
+that grants nothing against the bold signed webhook that does — so the later steps
+have a map to sit on. And if the API is not running, the tour says what to run
+instead of failing blank.
+
 **Controls:** the panel advances on its own every 8 seconds. `⏸` pauses, `◀ ▶`
 step manually, `✕` closes it. Reloading the page replays the tour cleanly — it
 refunds its own purchase on start, so the duplicate-purchase guard cannot strand
