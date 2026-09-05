@@ -67,15 +67,23 @@ npm run serve
 `http://127.0.0.1:8642`를 열고 **별빛 상점**에서 구매하면 됩니다. 모의 모드는
 같은 원장과 같은 멱등 지급 경로를 쓰고, Neon만 호출하지 않습니다.
 
-**안내 투어** — 게임이 스스로 플레이하는 동안 결제 수명 전체(위조 서명 403 → 지급 →
-계정 인계 → 재전송 → 이중구매 409 → 환불 회수 → 환불 뒤 지급 거절)를 13단계로
-실연합니다. 화면의 JSON은 전부 방금 서버가 준 실제 응답입니다:
+**체크아웃 인스펙터** — 예전 13단계 자동 투어를 대체했습니다(2026-09-05).
+자동 진행 없이 실제 상점을 관찰합니다: 직접 구매하면 5단계 안내가 실제 상점
+이벤트로 진행되고, 현재 빌드에서 추출한 소스 발췌와 민감정보를 가린 실시간
+HTTP 기록, 3D 성에 표시되는 장식 3종과 개별 환불 버튼을 보여줍니다. 구매는
+새로고침해도 유지되며 **Test refund**(또는 `.data/` 삭제)로 초기화합니다:
 
 ```
 http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 ```
 
-단계별 스크린샷: [docs/evidence/tour/](docs/evidence/tour/)
+이전 투어의 단계별 스크린샷은 역사 기록으로 남아 있습니다:
+[docs/evidence/tour/](docs/evidence/tour/)
+
+**Dedicated 서버 모드** — 게임을 권위 서버 프로세스로 돌리고 웹/엔진
+클라이언트가 스냅샷을 렌더링하는 모드도 있습니다
+(`start-dedicated.bat` / `./start-dedicated.command`). 실행법·설계·결제
+게이트웨이 방향은 [13 — Dedicated server](docs/13-dedicated-server.md) 참조.
 
 샌드박스 연결 절차는 [docs/07-sandbox-checklist.md](docs/07-sandbox-checklist.md)에
 단계별로 있습니다.
@@ -100,3 +108,5 @@ http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 | [09 — Sandbox run](docs/09-sandbox-run.md) | 샌드박스 실거래 기록 · 확인된 것 · 환불 장애 리포트 |
 | [10 — What this proves](docs/10-what-this-proves.md) | 단계별로 무엇이 증명됐고 무엇이 아닌지 |
 | [11 — Accounts & saves](docs/11-accounts-and-saves.md) | 인계 코드 · 서버 저장본 · 충돌 처리 |
+| [12 — Current review](docs/12-review.md) | 최신 검토 · 이식 경계 · 남은 한계 |
+| [13 — Dedicated server](docs/13-dedicated-server.md) | 권위 서버 실행법 · 설계 · 결제 게이트웨이 방향 |
