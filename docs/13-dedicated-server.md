@@ -73,9 +73,9 @@ to two services:
 
 ```mermaid
 flowchart LR
-    W[Web client] -- "HTTP /api/store/*" --> P[Payment service :8642]
-    W -- "WS snapshots" --> D[Dedicated server :8643]
-    P -- "checkout / webhooks" --> N[Neon]
+    W["Web client"] -- "HTTP /api/store/*" --> P["Payment service :8642"]
+    W -- "WS snapshots" --> D["Dedicated server :8643"]
+    P -- "checkout / webhooks" --> N["Neon"]
 ```
 
 The intended direction is for the dedicated server to become **the only
@@ -85,11 +85,11 @@ server-to-server:
 
 ```mermaid
 flowchart LR
-    W[Web client] -- WS --> D[Dedicated server]
-    U[Unity / Unreal clients] -- WS --> D
-    D -- "internal HTTP + player identity" --> P[Payment service]
-    P -- "create checkout / signed webhooks" --> N[Neon]
-    B[Player's browser] -. "hosted payment page (redirect)" .-> N
+    W["Web client"] -- WS --> D["Dedicated server"]
+    U["Unity / Unreal clients"] -- WS --> D
+    D -- "internal HTTP + player identity" --> P["Payment service"]
+    P -- "create checkout / signed webhooks" --> N["Neon"]
+    B["Player&#39;s browser"] -. "hosted payment page (redirect)" .-> N
 ```
 
 Why this is worth doing:
