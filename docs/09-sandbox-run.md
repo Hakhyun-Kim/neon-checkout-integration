@@ -167,6 +167,40 @@ Resulting state:
 That last row matters more than it looks: without it, a purchase webhook arriving
 after a refund would silently resurrect a revoked entitlement.
 
+---
+
+## Resolution addendum (2026-09-06) — real refunds work with an explicit items body
+
+A fresh run against a Cloud Run-hosted deployment of this service (stable
+webhook endpoint, no tunnel) settled the defect report above:
+
+- **`POST /purchases/{id}/refund` with body `{}` still fails** — reproduced
+  the same day on a brand-new completed purchase (`status: "complete"`,
+  `refundableQuantity: 1`, a different account and payment method than the
+  original report): `500 {"code":"UNKNOWN_ERROR","message":"Unhandled error"}`.
+  Question 2 above is therefore answered: the failure is specific to the
+  empty-body (full-refund) path, and it remains a vendor-side bug worth
+  reporting.
+- **The item-level body succeeds.** One field-name subtlety: the purchase
+  object exposes the item id as `items[].id`, while the refund request wants
+  it as `itemId` (a wrong/empty id returns a clean
+  `400 PURCHASE_ITEMS_TO_REFUND_NOT_FOUND`, which is how the mapping was
+  found):
+
+```
+POST /purchases/{purchaseId}/refund
+X-API-KEY: <sandbox key>
+{"items":[{"itemId":"<purchase.items[].id>","quantity":1}]}
+→ 201 { refundId, purchaseId, totalAmount: 490000, … }
+```
+
+- **The webhook loop closed in about one second.** Refund created at
+  23:21:11.692Z; `refund.processed` was delivered to the live endpoint and
+  answered `200` at 23:21:12; the entitlement read back `{}` immediately
+  after. Purchase, fulfilment and now refund have all been verified against
+  real Neon-produced events — the synthetic-event caveat above is history
+  for the refund path, and remains only for disputes.
+
 **What this does not prove.** It does not confirm the shape of the event Neon
 actually sends — field names, whether `accountId` is populated, whether
 `externalReferenceId` is null in practice as the documentation example suggests, or

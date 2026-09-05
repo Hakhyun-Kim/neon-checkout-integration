@@ -77,11 +77,14 @@ one process, which stops being true the moment there is more than one instance.
 `FirestoreRepository` puts the whole fulfillment inside a transaction, and passes
 the same suite.
 
-**Not covered.** A real `refund.processed` event. Neon's sandbox refuses every
-refund with a `500`, through both the Console and the REST API, on two payment
-methods — reported in [09](09-sandbox-run.md). Revocation is therefore verified
-against a synthetic event built from real purchase data, and that distinction is
-kept rather than blurred.
+**Not covered at this stage** (resolved later): a real `refund.processed`
+event. Neon's sandbox refused every refund with a `500` at the time, so
+revocation was verified against a synthetic event built from real purchase
+data. On 2026-09-06 a real refund succeeded with an explicit item-level body
+(the empty-body path still 500s) and the real `refund.processed` revoked the
+entitlement end to end — see the
+[resolution addendum in 09](09-sandbox-run.md). Disputes remain untestable
+from the merchant side.
 
 ---
 
