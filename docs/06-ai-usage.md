@@ -8,8 +8,7 @@ output was verified.
 - **Claude Code** (Anthropic) — this integration: server design review, the Korean
   market analysis, documentation, and an adversarial code review of my own
   implementation.
-- **Codex** — the surrounding game, over the months before this integration. The
-  game's own `README.md` records that history; it predates this work.
+- **Codex** — the original game, then the independent 2026-09-05 integration review, persistence fixes, documentation update and browser verification.
 
 ## Division of labour
 
@@ -17,8 +16,7 @@ output was verified.
 
 - using a game I had already shipped rather than a starter pack, and accepting the
   constraints that came with it;
-- Hosted checkout as the surface, with the server written so Embedded and Direct
-  need no server change;
+- Hosted checkout as the surface, with a server boundary reusable by other clients; Embedded and Direct adapters remain unimplemented;
 - a single deterministic cosmetic as the SKU, chosen for provable fulfillment and
   to stay outside Korea's probability-disclosure regime;
 - the trust boundary — client sends a SKU, never a price; only a verified webhook
@@ -63,3 +61,5 @@ Nothing here is trusted because a model produced it.
 A fuller engineering log — what was built in what order, how each defect was
 found, and where the AI was wrong — is kept separately.
 
+
+The current API reference confirms taxCode and bundleContents; the unconfirmed-field notes above describe the earlier review. See [05](05-open-questions-for-neon.md).

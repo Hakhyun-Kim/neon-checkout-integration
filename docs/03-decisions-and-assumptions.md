@@ -1,5 +1,7 @@
 # 03 — Decisions and assumptions
 
+> Current implementation and verification limits: [12 — Review](12-review.md).
+
 ## Why this app
 
 A blank starter project would have been easier. This integration went into a game

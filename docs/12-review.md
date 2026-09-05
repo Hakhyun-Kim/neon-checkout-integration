@@ -1,0 +1,82 @@
+# 12 — Current integration review (2026-09-05)
+
+Scope: this week's changes through game commit 783c4cd, compared with the parent
+of cf309c6, and documentation through 9c7238d. Corrections below were prepared for the 2026-09-05 repository handoff. Earlier documents describe stages of development;
+this page qualifies their current claims.
+
+## Separation and reuse
+
+Payment code lives in `server/`, two app modules, markup/styles and startup wiring.
+No simulation, tactics or balance files changed. The smallest reuse boundary is
+`server/neon-client.mjs`, an injected-fetch HTTP adapter with no game dependencies.
+The complete service also includes application policy: catalog, identity, markets,
+storage, refunds, transfer codes and saves. Porting means replacing those policies.
+The banner UI and tour are game-specific adapters.
+
+The initial checkout example has grown substantially. Accounts, saves, Firestore
+and the tour are additional scope; the whole integration is not a 350-line SDK.
+
+## Corrections
+
+| Problem | Change and evidence |
+|---|---|
+| Development server served repository files, including credentials and ledger | Public build allowlist; real HTTP private-path regression checks |
+| JSON disk failure left an uncommitted grant in memory | Clone, persist, then publish; filesystem failure/retry/reopen regression |
+| Refund before purchase mapping was discarded | Retain purchase-ID tombstones; both backends suppress a later grant |
+| Firestore completed checkouts retained pending TTL | Clear expiresAt on fulfilled/refunded records to preserve refund lookup |
+| English return URL lost locale | Preserve lang on return/cancel; remove only callback parameters |
+| Tour modified wave/HP and implied mock signature verification | Observe normal gameplay; label mock grant and entitlement count accurately |
+| Tour could overlap requests and repeat completed state | Serialize navigation; end automatic playback at step 13 |
+| Launcher could inherit hosted settings | Explicit mock/sandbox/JSON selection; tour refuses hosted mode |
+
+Neon's [Hosted Checkout overview](https://docs.neonpay.com/docs/about-hosted-checkout)
+and [webhook guide](https://docs.neonpay.com/docs/webhooks-and-callbacks) were checked
+on 2026-09-05. The hosted page is a separate Neon surface; HMAC authenticates
+webhooks and non-2xx deliveries are retried for up to 36 hours. The mock tour
+does not prove the hosted page or valid signature delivery.
+
+## Remaining production work
+
+1. **Concurrent pending sessions:** `already_owned` rejects checkout after an
+   entitlement exists. Two concurrent requests were reproduced as HTTP 201/201 with two provider calls. Actual double charging was not tested; Neon may invalidate older sessions.
+   Add atomic reservation and expiry/reconciliation. Define refunds when multiple
+   purchases cover one entitlement; current revocation removes it unconditionally.
+2. **Cross-origin markets:** bearer identity works, but explicit market choice is
+   cookie-based. Native/cross-origin clients need another supported preference contract.
+3. **Saves:** endpoints are tested; game save/load buttons remain local. A supplied
+   stale baseVersion is rejected, but omitting it permits an unconditional write.
+4. **Transfer codes:** individual claims are transactional. Concurrent Firestore
+   issuance can retain two codes because the query precedes the write batch.
+   Bearer account IDs are credentials, not public identifiers or verified users.
+5. **Environment isolation:** Firestore namespaces environments; JSON uses one
+   file path. Use separate data directories for sandbox and production.
+6. **Recovery:** the outbound request now has a 10-second timeout. Still add recovery for polling network errors,
+   and reconciliation for unknown purchase references. Persisted early refunds
+   are handled separately from unknown purchase events.
+
+Embedded, Direct, native deep links, deployment and dispute policy are not
+implemented merely by choosing another client. These are limits, not guarantees.
+
+## Verification
+
+- `npm.cmd ci`: passed; 26 development-inclusive advisories reported.
+- `npm.cmd audit --omit=dev`: zero runtime advisories.
+- Initial `npm.cmd run check`: passed before the defects above were found.
+- `node scripts/balance-check.mjs 60`: all nine combinations passed (540 runs).
+  Normal novice completion was 38%; normal regular completion was 90%.
+- Updated `npm.cmd run store:check`: passed on JSON and Firestore emulator.
+- `npm.cmd run service:check`: passed, including private-file HTTP checks.
+- Desktop English tour: all 13 steps manually advanced; observed 201, forged 403,
+  Owned, transfer, duplicate:true, owned 409, revoked:true and late-grant ignored.
+  Browser warning/error log was empty.
+
+No new real sandbox charge or refund was performed. Historical sandbox purchases
+remain historical evidence; the reported real-refund blocker was not rechecked.
+
+Final verification: the full `npm.cmd run check` passed after the fixes; the revised store suite passed on both JSON and Firestore. At 390×844, the store and tour were separately scrollable, Owned was visible, and no horizontal overflow was measured. The normal mock Buy button returned to `?lang=en` with Owned. No browser warnings/errors were recorded. Full accessibility-label translation and a new real sandbox payment/refund were not verified. Existing screenshots remain historical.
+
+Follow-up: a controlled provider reproduced concurrent checkout creation (`201/201`, two provider calls). The live vendor outcome was not tested. Hosted-only redirect validation and an abortable 10-second request timeout were added and checked; token-only responses are rejected. Catalog lookup now rejects inherited object-property names.
+
+Presentation follow-up: the paid flag moved out of the hidden legacy champion panel into the common title HUD. Split-origin deployment must also explicitly permit the API origin in the shipped CSP connect-src policy; the API base meta tag alone does not enable it.
+
+Final follow-up validation: the full check gate passed after the outbound timeout, Hosted response guard, SKU lookup and HUD placement changes. The emulator-backed repository tests had passed before those adapter/presentation-only edits; the JSON/HTTP suite was rerun afterward. The normal game balance was not modified. The repository history records the finalized handoff changes.

@@ -1,65 +1,40 @@
-# 05 — Open questions for Neon
+# 05 — Remaining questions for Neon
 
-Questions worth sending to Neon before taking this to production, grouped by
-whether they block a launch. Everything here is something the published
-documentation did not settle.
+Updated 2026-09-05. Earlier open questions mixed historical gaps with current
+ones. These are the questions that still affect production behavior.
 
-> Several of these were answered by the live sandbox run — payment methods, tax
-> treatment, settlement fees, the checkout response shape, and partial-refund
-> mechanics. See [09 — Sandbox run](09-sandbox-run.md), which also carries a
-> defect report for refunds failing server-side in sandbox.
+1. **Checkout lifecycle and duplicate sessions.** How should Hosted clients obtain
+   the checkout ID used by the documented GET/expire endpoints when the recorded
+   sandbox creation response contains redirectUrl and token but no checkoutId?
+   Which states are safe to replace, and what guarantees apply when the same
+   account opens a second checkout for the same permanent SKU?
+2. **Reconciliation.** What is the recommended recovery path when a signed
+   purchase arrives without a matching local intent, or checkout creation returns
+   an uncertain network result? The current implementation logs unknown purchase
+   references and retains early refunds by purchase ID.
+3. **Refunds and disputes.** The recorded sandbox refund attempts returned 500
+   ([09](09-sandbox-run.md)). When that is resolved, verify a real refund event and
+   partial-refund semantics. Define whether disputes revoke on open or final loss.
+4. **Production operations.** Confirm secret rotation overlap, outbound API rate
+   limits, and supported reconciliation/monitoring procedures.
+5. **Market rollout.** Confirm currently enabled Korean payment methods for the
+   merchant account and checkout type; the methods in [09](09-sandbox-run.md) are
+   observations from that sandbox run, not a universal availability guarantee.
 
-## Blocking
+## Resolved or clarified
 
-1. **Sandbox lifecycle.** Is there a dedicated sandbox environment or key prefix,
-   and test payment instruments for each supported method? The implementation
-   reads `isSandbox` on the event but does not yet enforce environment separation,
-   because I do not know whether sandbox and production share a webhook listener.
+- Environment checks are implemented. Firestore uses separate namespaces; JSON
+  still needs separate data directories for environment isolation.
+- The [create-checkout reference](https://docs.neonpay.com/reference/createcheckout)
+  explicitly lists bundleContents (default empty) and taxCode (digital_goods).
+  Earlier notes saying these fields were unconfirmed describe the earlier review.
+  The single cosmetic payload remains the smaller shape already used in sandbox.
+- The [webhook guide](https://docs.neonpay.com/docs/webhooks-and-callbacks) says retry
+  data is identical and non-2xx requests are retried for up to 36 hours. Local
+  deduplication uses event ID and checkout state.
+- The [checkout details](https://docs.neonpay.com/reference/getcheckout) and
+  [expire endpoint](https://docs.neonpay.com/reference/expirecheckout) are documented.
+  Do not invent a local expiry duration: the documented default can be configured
+  per merchant, and cancellation of a browser page does not prove payment failed.
 
-2. **Ignorable events.** Neon retries any non-2xx for up to 36 hours. What is the
-   recommended response for an event a merchant intentionally does not handle —
-   2xx to stop retries, or a specific status? Same question for a
-   `purchase.completed` whose `externalReferenceId` is unknown to us (which, if it
-   ever happens, is unrecoverable by retry).
-
-3. **Dispute semantics, and partial refunds.** Refunds are now handled — see the
-   answered section below. What is still open: `dispute.opened` is version 1 and
-   carries only a `purchaseId`, so does `dispute.closed` report an outcome we can
-   act on, and is the merchant expected to revoke on open or on an unfavourable
-   close? Separately, can a single-item purchase be partially refunded, and if so
-   what does `items[].quantity` look like?
-
-4. **KR payment methods.** Which Korean rails are live today (카카오페이,
-   네이버페이, 토스, carrier billing, 상품권), and does the set differ by checkout
-   type? See [04](04-korea-market-notes.md).
-
-## Important, not blocking
-
-5. **Item schema.** Are `bundleContents` and `taxCode` valid on the checkout item
-   payload? They are sent by this implementation and appear on the purchase event,
-   but I could not confirm them in the checkout request reference — I would rather
-   remove them than send fields that are silently ignored.
-
-6. **Checkout response fields.** The reference documents `redirectUrl`; the
-   embedded flow needs `checkoutId` and a client token. Are all three always
-   returned, so one server endpoint can serve Hosted, Embedded, and Direct
-   without branching?
-
-7. **Signature details.** Confirmed: `x-neon-digest`, HMAC-SHA256 over the raw
-   body. Is there a timestamp component or replay window, and is there a key
-   rotation procedure (dual secrets during rollover)?
-
-8. **`accountId` and `POST /auth/token`.** For a game with no login — this one
-   uses an `HttpOnly` cookie — what is the recommended identity strategy, and does
-   Neon deduplicate accounts across it?
-
-9. **Country resolution.** Given that currency must match `playerCountry`, does
-   Neon resolve the player's country itself on the hosted page, and what happens
-   if the value we send disagrees with where they actually pay from?
-
-## Worth knowing
-
-10. **Idempotency on our side vs. yours.** We dedupe on `event.id`. Is `event.id`
-    stable across retries of the same delivery, and unique per delivery attempt?
-11. **Webhook source IPs or mTLS**, if any, for allowlisting.
-12. **Rate limits** on `POST /checkout`.
+See [12 — Current review](12-review.md) for implementation limits and test results.

@@ -12,7 +12,7 @@ sequenceDiagram
 
     P->>G: GET /api/store/catalog?locale=ko
     G-->>P: [{sku, name, displayPrice}] + Set-Cookie cd_player
-    P->>G: POST /api/store/checkout {sku, locale, country}
+    P->>G: POST /api/store/checkout {sku, locale}
     Note over G: look SKU up in allowlist,<br/>server supplies price + currency,<br/>mint externalReferenceId
     G->>N: POST /checkout (X-API-KEY)
     N-->>G: { redirectUrl }
