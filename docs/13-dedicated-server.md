@@ -24,8 +24,10 @@ Requires Node 22.9+. From a `constellation-defense` checkout:
 Either starts the dedicated server (`ws://127.0.0.1:8643`) and the web client
 (`http://127.0.0.1:8642`), then opens the live viewer. A server-side bot plays
 immediately; the on-screen panel shows the architecture, command flow, code
-map and progress, and a **Try the game** button switches to an ordinary local
-client-mode run.
+map and progress, a **Store — through this server** button that opens the real
+store over the gateway (mock mode, no credentials; delivered cosmetics appear
+on the shared castle for every viewer), and a **Try the game** button that
+switches to an ordinary local client-mode run.
 
 Manual equivalent:
 
@@ -50,10 +52,21 @@ executable form of the protocol: RFC 6455 handshake vector, frame length
 encodings, health endpoint, viewer welcome and snapshot schema, autonomous
 progress into combat, event/decision streaming, tick advancement, viewer
 command refusal, wrong-key downgrade, controller speed/pause/restart with
-invalid-input rejection, and restart announcement to every client. It passes
-in CI on Linux and locally on Windows; a manual browser pass covered the live
-viewer, the role badge and denial path, speed-up with the key, switching to a
-local game and rejoining the same server session, with an empty console.
+invalid-input rejection, and restart announcement to every client. The
+gateway suite boots a **real in-process payment service** (mock mode,
+temporary JSON ledger) behind the server and asserts: catalog forwarding,
+minted-identity announcement, supplied-identity continuity, market selection
+through the cookie jar, brokered checkout → fulfilment → refund, the
+delivered cosmetic appearing in — and after refund disappearing from —
+another viewer's snapshots, webhook paths refused with a written reason, and
+non-store paths refused. 29 assertions, green in CI on Linux and locally on
+Windows.
+
+Manual browser passes covered the live viewer, the role badge and denial
+path, speed-up with the key, switching to a local game and rejoining the
+same server session — and the store: a cosmetic bought and refunded through
+the panel's store button, with a second keyless viewer tab gaining and
+losing the shared castle decoration, consoles empty throughout.
 
 ## Design in one paragraph
 
@@ -66,57 +79,56 @@ plus engine events and a decision narration; clients merge and interpolate.
 The transport is a dependency-free WebSocket endpoint; roles are assigned at
 `hello`.
 
-## Payment topology — today, and the direction
+## Payment topology — one socket per client (shipped, protocol v2)
 
-Today the dedicated server carries the simulation only. The web client speaks
-to two services:
+In **client mode** the game talks to the payment service directly over HTTP,
+as documented throughout docs 00–12:
 
 ```mermaid
 flowchart LR
-    W["Web client"] -- "HTTP /api/store/*" --> P["Payment service :8642"]
-    W -- "WS snapshots" --> D["Dedicated server :8643"]
+    W["Web client (client mode)"] -- "HTTP /api/store/*" --> P["Payment service :8642"]
     P -- "checkout / webhooks" --> N["Neon"]
 ```
 
-The intended direction is for the dedicated server to become **the only
-client-facing edge**: clients hold one connection and one identity, and the
-dedicated server brokers store operations to the payment service
-server-to-server:
+In **server mode** the dedicated server is the only client-facing edge:
+clients hold one connection and one identity, and the server brokers store
+operations to the payment service server-to-server:
 
 ```mermaid
 flowchart LR
-    W["Web client"] -- WS --> D["Dedicated server"]
+    W["Web viewer"] -- "WS · snapshots + store" --> D["Dedicated server + gateway"]
     U["Unity / Unreal clients"] -- WS --> D
-    D -- "internal HTTP + player identity" --> P["Payment service"]
+    D -- "Bearer identity + cookie jar" --> P["Payment service"]
     P -- "create checkout / signed webhooks" --> N["Neon"]
     B["Player&#39;s browser"] -. "hosted payment page (redirect)" .-> N
 ```
 
-Why this is worth doing:
+What this buys, now demonstrated rather than promised:
 
-- **Adding a payment feature becomes a server-side change.** A new SKU or a
-  new flow lands in the payment service and the dedicated protocol; every
-  engine client just renders new catalog/entitlement data from the stream it
-  already has — no HTTP store client, cookies or CSP work per engine.
-- **Entitlements join the authoritative state.** A purchase lands in the
-  simulation the server owns, so every viewer sees the cosmetic appear from
-  the same snapshot — matching the rule that only the server's numbers are
-  the numbers.
-- **One identity.** The dedicated session becomes the identity clients prove
-  once; the server maps it to the payment service's bearer identity instead
-  of each client managing its own.
+- **A payment feature is a server-side change.** The store UI did not change
+  when the wire did — it swaps one injected transport function. An engine
+  client needs no HTTP store client, cookies or payment-origin CSP work; the
+  Unity/Unreal samples assert a brokered catalog on the socket they already
+  hold.
+- **Entitlements join the authoritative state.** After a brokered fulfilment
+  or refund the gateway re-reads that account's entitlements from the ledger
+  and broadcasts the union in every snapshot (`cosmetics`): buy a decoration
+  from the viewer panel and every watching client's castle wears it; refund
+  it and it disappears for everyone.
+- **One identity.** The connection's account is the `playerToken` from
+  `hello` (the same bearer identity client mode persists) or a minted UUID,
+  announced back in `storeIdentity`; a claimed transfer code switches the
+  connection's account. The gateway's per-connection cookie jar also makes
+  explicit market selection work for cookie-less clients — closing a
+  limitation docs/12 records for cross-origin callers.
 
-Two boundaries survive the change deliberately. The payment service stays a
-separate process behind the dedicated server rather than being absorbed into
-it: webhook delivery (retried up to 36 hours) must not depend on game-session
-lifecycle, and payment credentials stay out of the game-server process. And
-Hosted checkout still opens Neon's payment page in the player's browser —
-"clients talk only to the dedicated server" applies to API traffic, not to
-the hosted page redirect that is the point of Hosted checkout.
-
-**Status, honestly:** this is the designed next milestone, not the shipped
-state. What exists today and is verified: the role/auth handshake, the
-command/`commandResult` request path the store calls would reuse, snapshot
-broadcasting, and the payment service's bearer identity — the pieces the
-migration composes. The store messages themselves (`catalog`,
-`checkoutIntent`, entitlement pushes) are not yet in the protocol.
+Two boundaries survive on purpose. The payment service stays a separate
+process behind the gateway — webhook delivery (retried up to 36 hours) must
+not depend on game-session lifecycle, and payment credentials stay out of
+the game-server process; the gateway forwards an **allowlisted store surface
+only** and refuses `/api/webhooks/*` with a written reason. And Hosted
+checkout still opens Neon's payment page in the player's browser — "one
+socket" applies to API traffic, not to the redirect that is the point of
+Hosted checkout. A hosted-mode return currently lands on the client-mode
+URL; gateway-mode return routing is the recorded next seam, and the
+credential-free mock lifecycle runs entirely in-modal.

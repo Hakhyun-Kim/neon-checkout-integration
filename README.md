@@ -84,11 +84,13 @@ API-only saves.
 
 The game also runs as an authoritative server process with every client — the
 web build, and Unity/Unreal samples — rendering its snapshots
-(`start-dedicated.bat` / `./start-dedicated.command`). The intended direction
-is for that server to become the only client-facing edge, brokering store
-operations to the payment service so payment features become server-side
-changes. Run instructions, the design, the current-vs-target payment topology
-and its honest status are in [13 — Dedicated server](docs/13-dedicated-server.md).
+(`start-dedicated.bat` / `./start-dedicated.command`). In that mode the
+server is also the **only client-facing edge**: store calls ride the same
+WebSocket and are brokered to the payment service with the connection's
+account identity, and cosmetics delivered through it appear on the shared
+castle for every viewer. Run instructions, the design, both payment
+topologies (client mode and server mode) and the verification record are in
+[13 — Dedicated server](docs/13-dedicated-server.md).
 
 ## Verify
 
