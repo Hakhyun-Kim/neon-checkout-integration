@@ -82,8 +82,11 @@ http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 
 **Dedicated 서버 모드** — 게임을 권위 서버 프로세스로 돌리고 웹/엔진
 클라이언트가 스냅샷을 렌더링하는 모드도 있습니다
-(`start-dedicated.bat` / `./start-dedicated.command`). 실행법·설계·결제
-게이트웨이 방향은 [13 — Dedicated server](docs/13-dedicated-server.md) 참조.
+(`start-dedicated.bat` / `./start-dedicated.command`). 이 모드에서 서버는
+**상점 게이트웨이**이기도 합니다: 상점 호출이 같은 소켓을 타고 계정 신원과
+함께 결제 서비스로 중계되고, 지급된 장식은 모든 관전자의 공유 성에
+나타납니다. 실행법·설계·두 모드의 결제 토폴로지·검증 기록은
+[13 — Dedicated server](docs/13-dedicated-server.md) 참조.
 
 샌드박스 연결 절차는 [docs/07-sandbox-checklist.md](docs/07-sandbox-checklist.md)에
 단계별로 있습니다.
