@@ -15,7 +15,7 @@ npm run serve
 
 | Step | What happens | Where the code is |
 |---|---|---|
-| 1 | The tour pushes the run into late waves — bosses join | `src/app/neontour.js` calling the `stage.hurry` hook from `src/main.js` |
+| 1 | Opens with the whole payment flow drawn as one diagram, then pushes the run into late waves | `flowSvg()` in `src/app/neontour.js` + `stage.hurry` hook |
 | 2 | The citadel falls; the sell moment arrives | `stage.fall` hook |
 | 3 | Catalogue fetched — price, currency, country all server-side | `server/catalog.mjs`, `GET /api/store/catalog` |
 | 4 | Same product priced as KR and US side by side | `formatPrice()` in `server/catalog.mjs` |
@@ -83,3 +83,11 @@ transfer codes are single-use and this one is already spent.
 ## 13 — The server does not care what kind of client is calling
 
 ![Step 13](tour-13.png)
+
+## When the payment server is not running
+
+If the API cannot be reached — a static deployment, or the server simply not
+started — the tour does not fail blank. It says what to run, notes that a browser
+page cannot start a server itself, and offers a retry:
+
+![Server down guidance](tour-server-down.png)
