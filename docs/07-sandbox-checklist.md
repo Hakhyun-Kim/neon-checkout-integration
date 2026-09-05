@@ -32,6 +32,20 @@ you debug the wrong thing.
 Neon must reach two things: the browser redirect target and your webhook endpoint.
 A `127.0.0.1` address satisfies neither.
 
+> **B0. Alternative — deploy the service once instead of tunnelling.**
+> `deploy/cloud-run.sh` in the game repo deploys `server/index.mjs` to Cloud
+> Run with the keys in Secret Manager (APIs, Firestore creation, IAM, deploy,
+> and `/healthz` · `/readyz` · forged-webhook smoke checks are automated;
+> `--dry-run` prints everything first, `--smoke-checkout` creates one real
+> sandbox checkout). Then register `<service-url>/api/webhooks/neon` in step C
+> once, and any machine can run a purchase by pointing its local client at the
+> service (the script prints the two `index.html` edits: the `neon-api-base`
+> meta and a CSP `connect-src` entry). Cross-origin clients identify with the
+> bearer token, so the B2 cookie caveat does not apply; the billing-region
+> picker is cookie-based and stays at geo/default resolution in this setup
+> (see doc 12 — the dedicated gateway path in doc 13 is what solves that).
+> The webhook target stays stable and no credential leaves the server.
+
 **B1. Start a tunnel.**
 
 ```bash
