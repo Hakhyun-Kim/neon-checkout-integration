@@ -2,7 +2,7 @@
 
 A claims ledger. Each stage says what it demonstrates, what evidence backs it, and
 what it deliberately does not cover. The point of separating them is that "it
-works" is four different claims, and they were earned at different times by
+works" is five different claims, and they were earned at different times by
 different means.
 
 ---
@@ -24,7 +24,7 @@ they are charged or what they receive.
 - Typing `?purchase=return` by hand grants nothing.
 
 **Not covered.** The player identity is a bearer credential bound to a device, not
-an account. Stage 4 is where that changes.
+an account. Stage 5 is where that changes.
 
 ---
 
