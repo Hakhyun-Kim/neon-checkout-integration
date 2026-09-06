@@ -118,5 +118,6 @@ To include Firestore, start its emulator and set `FIRESTORE_EMULATOR_HOST` befor
 - [11 — Accounts and saves](docs/11-accounts-and-saves.md)
 - [12 — Current review and limitations](docs/12-review.md)
 - [13 — Dedicated server](docs/13-dedicated-server.md)
+- [14 — AI command journal](docs/14-ai-command-journal.md) — what was asked, what changed
 - [Earlier tour screenshots](docs/evidence/tour/) — historical, before this review
 - [한국어 요약](README-ko.md)
