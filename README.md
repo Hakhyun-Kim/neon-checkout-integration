@@ -86,8 +86,12 @@ web build, the Unity/Unreal samples) rendering its snapshots:
 `start-dedicated.bat` / `./start-dedicated.command`. The server is then the
 **only client-facing edge**: store calls ride the same WebSocket and are
 brokered to the payment service with the connection's identity, and delivered
-cosmetics appear on the shared castle for every viewer. Run instructions,
-design, both payment topologies and the verification record:
+cosmetics appear on the shared castle for every viewer. Read "dedicated"
+narrowly for now: the server plays itself with the shared bot policy and
+streams the result, the protocol has no player-action message, and the
+Unity/Unreal files are protocol smoke tests rather than viewers. Run
+instructions, design, both payment topologies, what exists today versus
+what is next, and the verification record:
 [13 — Dedicated server](docs/13-dedicated-server.md).
 
 ## Verify
