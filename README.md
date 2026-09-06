@@ -79,7 +79,7 @@ Firestore, the inspector). [12 — Review](docs/12-review.md) records the
 portability boundaries and the production gaps: simultaneous pending
 purchases, cross-origin market selection, API-only saves.
 
-## Beyond the task — server-side store gateway (spectator demo)
+## Groundwork for future work — server-side store gateway (spectator demo)
 
 The game can also run in one server process that plays itself with the
 shared bot policy and streams snapshots to the browser as a viewer:
