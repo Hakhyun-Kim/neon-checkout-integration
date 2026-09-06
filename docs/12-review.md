@@ -109,6 +109,9 @@ Each row has a test in `scripts/store-server-check.mjs` or a step in
 | `expiresAt` was written on intents, dedup records, limiter docs and transfer codes, but no Firestore TTL policy existed, so they accumulated. | The deploy script enables TTL on the four collection groups (idempotent). |
 | A redeploy without `--allowed-origins` reset CORS to the local defaults and silently broke the shared link at its first fetch. | The Pages origin is in the default; the smoke run checks the preflight. |
 | A carried `returnPath` query could place its own `api=` ahead of the server's; the cookie `Secure` flag came from `PUBLIC_URL` rather than the request. | Reserved keys are stripped from the carried query; `Secure` follows `x-forwarded-proto`. |
+| `PUT /api/save` stored the client's JSON as native Firestore fields, so a save holding a nested array (a board grid) would have been rejected with a 500 on the Firestore backend while passing on the JSON ledger. | The Firestore backend stores the save as one JSON string and inflates it on read; older native documents still read; the check round-trips nested arrays, dotted keys and empty objects on both ledgers. |
+| The gateway kept a cosmetics set per store identity for the life of the process, one per anonymous viewer that ever connected. | Entries of viewers that never bought anything are dropped when their last connection closes; buyers' cosmetics stay on the shared castle. |
+| The fatal message for a missing `PUBLIC_URL` said the webhook target would be unreachable; the webhook URL is registered in the Console and never derived from it. | The message names `successUrl` / `cancelUrl` instead. |
 
 Still open, unchanged: the checkout rate limit is keyed on the self-issued
 account id (an address-based limiter is next), and a second pending checkout for
