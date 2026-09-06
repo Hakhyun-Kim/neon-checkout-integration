@@ -8,7 +8,7 @@ integration; the code it describes lives in a separate repository.
   `src/app/neontour.js`. That repo's `AGENTS.md` has the file map and the
   conventions that keep the checkout from breaking.
 - **This repo:** design write-up. Start at `README.md`, then `docs/00` →
-  `docs/11`. `docs/evidence/` has screenshots and a walkthrough; `docs/10` is the
+  `docs/14`. `docs/evidence/` has screenshots and a walkthrough; `docs/10` is the
   claims ledger (what each stage proves and does not).
 
 ## To run or review the integration

@@ -58,8 +58,8 @@ Nothing here is trusted because a model produced it.
   than quietly fixed, because an honest account of what is unfinished is more
   useful than a clean-looking one.
 
-A fuller engineering log — what was built in what order, how each defect was
-found, and where the AI was wrong — is kept separately.
+The instruction-by-instruction record — what was asked, what came back, and
+what each instruction changed — is [14 — AI command journal](14-ai-command-journal.md).
 
 
 The current API reference confirms taxCode and bundleContents; the unconfirmed-field notes above describe the earlier review. See [05](05-open-questions-for-neon.md).
