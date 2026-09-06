@@ -9,7 +9,7 @@
 
 3D 매치-3 디펜스 게임 [Constellation Defense](https://github.com/Hakhyun-Kim/constellation-defense)에
 Neon **Hosted Checkout**을 붙였습니다. 판매 품목은 전투에 영향을 주지 않는
-영구 치장품 한 개(`CELESTIAL_BANNER`)입니다.
+영구 치장품 세 개(`CELESTIAL_BANNER`·`AURORA_SPIRES`·`GOLDEN_SENTINELS`)입니다.
 
 원래 이 게임은 서버가 전혀 없는 정적 빌드였습니다. 결제를 붙이려면 API 키를
 브라우저에 둘 수 없고, devtools로 고칠 수 있는 소유 기록은 소유 기록이 아니므로
