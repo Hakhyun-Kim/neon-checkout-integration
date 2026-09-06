@@ -1,7 +1,8 @@
 # 09 — Sandbox run: what it proved, the refund defect, and its resolution
 
 A live run against the Neon sandbox on 2026-09-04, through a public tunnel with
-real webhook delivery. Two purchases completed and were fulfilled. Refunds failed
+real webhook delivery. Two purchases completed and were fulfilled that day, and
+two more on 5–6 September against the Cloud Run deployment (addendum). Refunds failed
 server-side that day; that is written up as a defect report below, with the
 questions it raised. On 2026-09-06, against the Cloud Run deployment, an
 item-level refund succeeded end to end (resolution addendum at the end).
@@ -57,13 +58,15 @@ Several open questions were settled by looking at what actually arrived.
 카드 · Google Pay · Samsung Pay · Kakao Pay · Naver Pay
 ```
 
-카카오페이, 네이버페이 and 삼성페이 are live for KR. This is the first question for a Korean launch, and the answer is good.
+카카오페이, 네이버페이 and 삼성페이 are live for KR. This is the first question for a
+Korean launch, and the answer is good.
 
 One onboarding observation from the same page: Google Pay is preselected on the
 KR page and opens the real wallet sheet with the tester's real cards, so a first
 sandbox purchase looks like a live charge. The page's test-environment label and
 `isSandbox: true` on every webhook are the reassurance; Kakao Pay and Naver Pay
-give a lighter test approval. Worth one line in any note handed to QA before a Korean test pass.
+give a lighter test approval. Worth one line in any note handed to QA before a
+Korean test pass.
 
 **Tax is inclusive, 10%.** The checkout page showed `세금에 ₩445 포함`, and
 `GET /purchases/{id}` confirms `taxAmount: 44500`, `taxRate: 0.1`,
@@ -76,7 +79,8 @@ give a lighter test approval. Worth one line in any note handed to QA before a K
          "netProceedsAmount": 294, "settlementCurrency": "USD" }
 ```
 
-₩4,900 settles as $2.94 net after a $0.37 fee. Worth knowing before pricing in KRW.
+₩4,900 settles as $2.94 net after a $0.37 fee. Worth knowing before pricing in
+KRW.
 
 **The checkout id is called `id`.** *Corrected 2026-09-06.* This section used
 to say `POST /checkout` returns only `{ token, redirectUrl }`. A direct sandbox
@@ -179,7 +183,17 @@ after a refund would silently resurrect a revoked entitlement.
 ## Resolution addendum (2026-09-06) — real refunds work with an explicit items body
 
 A fresh run against a Cloud Run-hosted deployment of this service (stable
-webhook endpoint, no tunnel) settled the defect report above:
+webhook endpoint, no tunnel). Two more purchases completed there, both fulfilled
+by the signed webhook (purchase 3 through the local client pointed at the
+service, purchase 4 through the shared Pages link, clicked by hand):
+
+| | Purchase 3 (2026-09-05) | Purchase 4 (2026-09-06) |
+|---|---|---|
+| `purchaseId` | `1dddcc05-a630-49e2-acd8-d9d0142c08e3` | in the Cloud Run log, not copied here |
+| `purchase.completed` answered 200 | 15:26:41Z | 23:48:11Z |
+| Refund | item-level refund the next day, `refund.processed` 23:21:12Z (below) | `POST /api/store/refund` 202 at 23:48:39Z, `refund.processed` 23:48:42Z |
+
+The same run settled the defect report above:
 
 - **`POST /purchases/{id}/refund` with body `{}` still fails** — reproduced
   the same day on a brand-new completed purchase (`status: "complete"`,

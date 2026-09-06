@@ -118,3 +118,4 @@ http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 | [11 — Accounts & saves](docs/11-accounts-and-saves.md) | 인계 코드 · 서버 저장본 · 충돌 처리 |
 | [12 — Current review](docs/12-review.md) | 최신 검토 · 이식 경계 · 남은 한계 |
 | [13 — Store gateway / server mode](docs/13-dedicated-server.md) | 관전 데모 실행법 · 설계 · 상점 게이트웨이 · 지금 되는 것 vs 다음 단계 |
+| [14 — AI command journal](docs/14-ai-command-journal.md) | 무엇을 지시했고 무엇이 바뀌었는지 — 지시 단위 기록 |

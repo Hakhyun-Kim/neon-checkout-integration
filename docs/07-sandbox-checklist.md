@@ -109,7 +109,8 @@ currency (A4), or a field name Neon does not accept.
 
 **E3.** Pay with a sandbox instrument. Ask Neon for the test card numbers and
 whether any Korean methods (카카오페이, 토스, carrier billing) have sandbox
-equivalents — this is worth knowing regardless, because it is the first thing anyone shipping a Korean launch needs to answer.
+equivalents — this is worth knowing regardless, because it is the first thing
+anyone shipping a Korean launch needs to answer.
 
 **E4.** Confirm all four of these, in order:
 

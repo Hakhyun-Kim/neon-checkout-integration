@@ -148,7 +148,8 @@ review pass.
   body returns 201 and `refund.processed` arrives about a second later
   ([09](09-sandbox-run.md)).
 - Pages `?api=` parameter with the CSP as the allowlist, return URLs
-  validated. The full lifecycle was then clicked through by someone else.
+  validated. The full lifecycle was then clicked through by hand, from a fresh
+  browser on the Pages origin, not by the AI.
 
 ## Patterns
 

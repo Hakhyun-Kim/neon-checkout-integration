@@ -44,7 +44,7 @@ Nothing here is trusted because a model produced it.
 - The integration test (`npm run store:check`) runs against a real HTTP server and
   covers signature rejection, replay, cross-account and cross-amount tampering,
   environment mismatch, and rate limiting.
-- The project's full `npm run check` gate — 30-plus verification scripts plus the
+- The project's full `npm run check` gate — 29 verification scripts plus the
   build — passes with the integration in place.
 - The flow was then driven in a real browser. That step earned its keep twice: it
   found a session-losing origin mismatch between `localhost` and `127.0.0.1`, and

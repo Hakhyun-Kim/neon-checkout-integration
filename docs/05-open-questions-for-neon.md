@@ -1,6 +1,6 @@
 # 05 — Remaining questions for Neon
 
-Updated 2026-09-05. Earlier open questions mixed historical gaps with current
+Updated 2026-09-06. Earlier open questions mixed historical gaps with current
 ones. These are the questions that still affect production behavior.
 
 1. **Checkout lifecycle and duplicate sessions.** Which checkout states are safe
@@ -13,10 +13,16 @@ ones. These are the questions that still affect production behavior.
    (`{ id, token, redirectUrl, externalProvider }`, confirmed with a direct
    sandbox call). Our adapter had been reading `checkoutId`; fixed the same day
    in `server/store-api.mjs`.
-2. **Reconciliation.** What is the recommended recovery path when a signed
-   purchase arrives without a matching local intent, or checkout creation returns
-   an uncertain network result? The current implementation logs unknown purchase
-   references and retains early refunds by purchase ID.
+2. **Reconciliation.** Two halves. The local half is ours: the intent is
+   recorded after the create call today (`createNeonCheckout`, then
+   `recordCheckout` in `server/store-api.mjs`), so a create that times out after
+   Neon created the checkout leaves an orphan on Neon's side; before going live
+   the intent should be written first as `creating` and marked `pending` on
+   success, with `creating` records expiring on the same TTL. The half only Neon
+   can answer: can purchases be listed by `externalReferenceId` or `accountId`,
+   so a nightly job can catch a signed `purchase.completed` that arrived with no
+   matching local intent? Today such events are acknowledged 200 and logged, and
+   early refunds are retained by purchase ID.
 3. **Refunds and disputes.** Partially resolved 2026-09-06 ([09](09-sandbox-run.md)
    addendum): item-level refunds (`{"items":[{"itemId": purchase.items[].id,
    "quantity": n}]}`) succeed, and a real `refund.processed` revoked the
@@ -26,9 +32,11 @@ ones. These are the questions that still affect production behavior.
    genuinely malformed bodies, so this is a handler failure and not a rejected
    request ([09](09-sandbox-run.md), 2026-09-07 re-verification). The purchase
    object also names the id `items[].id` while the refund request wants
-   `itemId`. Disputes
-   remain untriggerable from the merchant side — define whether they revoke on
-   open or final loss.
+   `itemId`. `dispute.opened` / `dispute.closed` are version-1 events
+   carrying only a `purchaseId`, with no merchant-side trigger in the sandbox:
+   is there a test trigger, does `dispute.closed` carry an outcome, and is a
+   v2 shape with account and items planned? Our default would be to freeze the
+   entitlement on open and revoke on a lost close.
 4. **Production operations.** Confirm secret rotation overlap, outbound API rate
    limits, and supported reconciliation/monitoring procedures.
 5. **Market rollout.** Confirm currently enabled Korean payment methods for the

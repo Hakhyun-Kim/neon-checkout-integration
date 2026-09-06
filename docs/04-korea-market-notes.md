@@ -2,7 +2,8 @@
 
 These are the things I would put on the table in a first working session before
 shipping Neon checkout into Korea — some of them questions for Neon, some of them
-work on the integrating side. They are the reason the integration is shaped the way it is.
+work on the integrating side. They are the reason the integration is shaped the
+way it is.
 Everything legal below is flagged as **to verify** — it reflects how I have seen
 these questions handled, not legal advice.
 
@@ -60,15 +61,17 @@ what the merchant-of-record split of responsibility is.
 
 Korea's game legislation requires probability disclosure for 확률형 아이템. This
 is a large part of why the items sold here are deterministic cosmetics (a banner
-and two castle decorations): they stay entirely outside that regime. Selling gacha through a
-web shop needs the disclosure surface designed alongside the checkout, not after.
+and two castle decorations): they stay entirely outside that regime. Selling gacha
+through a web shop needs the disclosure surface designed alongside the checkout,
+not after.
 
 ## 5. Consumer protection and refunds
 
 Korea's e-commerce law provides a withdrawal period (청약철회), with carve-outs for digital
 content that has already been supplied or consumed — the boundary matters and is
 exactly where disputes land. **To verify:** whether Neon as merchant of record
-handles the withdrawal notice and refund obligation, or whether the game must surface its own policy in-game. Also worth confirming: 현금영수증 (cash receipt)
+handles the withdrawal notice and refund obligation, or whether the game must
+surface its own policy in-game. Also worth confirming: 현금영수증 (cash receipt)
 issuance, which Korean buyers expect for cash-equivalent payment methods.
 
 ## 6. Data and settlement

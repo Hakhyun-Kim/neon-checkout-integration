@@ -34,7 +34,8 @@ sent a SKU and a display language; it has no say in what anything costs.
 ![Neon hosted checkout](02-neon-checkout.png)
 
 Rendered from `languageLocale: "ko-KR"`. The payment methods offered for KR are
-**카드, Google Pay, Samsung Pay, Kakao Pay, Naver Pay** — the answer to the first question for a Korean launch. The total reads `KRW ₩4,900` with
+**카드, Google Pay, Samsung Pay, Kakao Pay, Naver Pay** — the answer to the first
+question for a Korean launch. The total reads `KRW ₩4,900` with
 `세금에 ₩445 포함`, confirming both the 100× integer encoding (`490000`) and that
 VAT is inclusive.
 
