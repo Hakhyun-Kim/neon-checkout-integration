@@ -44,16 +44,17 @@ Nothing here is trusted because a model produced it.
 - The integration test (`npm run store:check`) runs against a real HTTP server and
   covers signature rejection, replay, cross-account and cross-amount tampering,
   environment mismatch, and rate limiting.
-- The project's full `npm run check` gate — 20-plus verification scripts plus the
+- The project's full `npm run check` gate — 30-plus verification scripts plus the
   build — passes with the integration in place.
 - The flow was then driven in a real browser. That step earned its keep twice: it
   found a session-losing origin mismatch between `localhost` and `127.0.0.1`, and
   a CSS regression that squeezed the product description to one character wide.
   Neither was visible in the code or in the passing tests.
 - Every factual claim about the Neon API was checked against the published
-  documentation. What could not be confirmed — `taxCode`, `bundleContents` — was
-  removed from the request rather than assumed, and turned into a question in
-  [05](05-open-questions-for-neon.md).
+  documentation. What could not be confirmed at the time — `taxCode`,
+  `bundleContents` — was removed from the request rather than assumed, and
+  turned into a question in [05](05-open-questions-for-neon.md). (The current
+  API reference confirms both; the fields are back.)
 - The remaining gaps are published in [03](03-decisions-and-assumptions.md) rather
   than quietly fixed, because an honest account of what is unfinished is more
   useful than a clean-looking one.
@@ -61,5 +62,3 @@ Nothing here is trusted because a model produced it.
 The instruction-by-instruction record — what was asked, what came back, and
 what each instruction changed — is [14 — AI command journal](14-ai-command-journal.md).
 
-
-The current API reference confirms taxCode and bundleContents; the unconfirmed-field notes above describe the earlier review. See [05](05-open-questions-for-neon.md).

@@ -70,13 +70,25 @@ implemented merely by choosing another client. These are limits, not guarantees.
   Owned, transfer, duplicate:true, owned 409, revoked:true and late-grant ignored.
   Browser warning/error log was empty.
 
-No new real sandbox charge or refund was performed. Historical sandbox purchases
-remain historical evidence; the reported real-refund blocker was not rechecked.
+No new sandbox charge or refund was performed in this review; the refund
+blocker was resolved the next day ([09](09-sandbox-run.md)).
 
-Final verification: the full `npm.cmd run check` passed after the fixes; the revised store suite passed on both JSON and Firestore. At 390×844, the store and tour were separately scrollable, Owned was visible, and no horizontal overflow was measured. The normal mock Buy button returned to `?lang=en` with Owned. No browser warnings/errors were recorded. Full accessibility-label translation and a new real sandbox payment/refund were not verified. Existing screenshots remain historical.
+Same-day follow-ups, in order:
 
-Follow-up: a controlled provider reproduced concurrent checkout creation (`201/201`, two provider calls). The live vendor outcome was not tested. Hosted-only redirect validation and an abortable 10-second request timeout were added and checked; token-only responses are rejected. Catalog lookup now rejects inherited object-property names.
+- Full `npm.cmd run check` passed after the fixes; the revised store suite
+  passed on JSON and the Firestore emulator.
+- 390×844: store and tour scroll separately, Owned visible, no horizontal
+  overflow. Mock Buy returned to `?lang=en` with Owned. Console clean.
+- Concurrent checkout creation reproduced with a controlled provider
+  (`201/201`, two provider calls); the live vendor outcome was not tested.
+- Added: Hosted-only redirect validation (token-only responses rejected), an
+  abortable 10-second outbound timeout, own-property catalog lookup.
+- The paid flag moved from the hidden legacy champion panel to the title HUD.
+- Split-origin deployment needs the API origin in the shipped CSP
+  `connect-src`; the API base meta tag alone is not enough.
+- The full gate passed again after these changes; the emulator-backed
+  repository tests predate the adapter-only edits and the JSON/HTTP suite was
+  rerun. Game balance unchanged.
 
-Presentation follow-up: the paid flag moved out of the hidden legacy champion panel into the common title HUD. Split-origin deployment must also explicitly permit the API origin in the shipped CSP connect-src policy; the API base meta tag alone does not enable it.
-
-Final follow-up validation: the full check gate passed after the outbound timeout, Hosted response guard, SKU lookup and HUD placement changes. The emulator-backed repository tests had passed before those adapter/presentation-only edits; the JSON/HTTP suite was rerun afterward. The normal game balance was not modified. The repository history records the finalized handoff changes.
+Not verified here: full accessibility-label translation. Existing screenshots
+remain historical.
