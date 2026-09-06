@@ -79,20 +79,21 @@ Firestore, the inspector). [12 — Review](docs/12-review.md) records the
 portability boundaries and the production gaps: simultaneous pending
 purchases, cross-origin market selection, API-only saves.
 
-## Dedicated server mode
+## Beyond the task — server-side store gateway (spectator demo)
 
-The game also runs as an authoritative server process, with every client (the
-web build, the Unity/Unreal samples) rendering its snapshots:
-`start-dedicated.bat` / `./start-dedicated.command`. The server is then the
-**only client-facing edge**: store calls ride the same WebSocket and are
-brokered to the payment service with the connection's identity, and delivered
-cosmetics appear on the shared castle for every viewer. Read "dedicated"
-narrowly for now: the server plays itself with the shared bot policy and
-streams the result, the protocol has no player-action message, and the
-Unity/Unreal files are protocol smoke tests rather than viewers. Run
+The game can also run in one server process that plays itself with the
+shared bot policy and streams snapshots to the browser as a viewer:
+`start-dedicated.bat` / `./start-dedicated.command`. That server is then
+the **only client-facing edge for the store**: store calls ride the same
+WebSocket and are brokered to the payment service with the connection's
+identity, and delivered cosmetics appear on the shared castle for every
+viewer. It is not yet a dedicated game server in the multiplayer sense: the
+protocol has no player-action message, and the Unity/Unreal files are
+protocol smoke tests rather than viewers. A real dedicated server (player
+input through it) with Unity/Unreal clients on top is the next step. Run
 instructions, design, both payment topologies, what exists today versus
 what is next, and the verification record:
-[13 — Dedicated server](docs/13-dedicated-server.md).
+[13 — Store gateway / server mode](docs/13-dedicated-server.md).
 
 ## Verify
 
@@ -116,7 +117,7 @@ To include Firestore, start its emulator and set `FIRESTORE_EMULATOR_HOST` befor
 - [10 — Claims by development stage](docs/10-what-this-proves.md)
 - [11 — Accounts and saves](docs/11-accounts-and-saves.md)
 - [12 — Current review and limitations](docs/12-review.md)
-- [13 — Dedicated server](docs/13-dedicated-server.md)
+- [13 — Store gateway / server mode](docs/13-dedicated-server.md)
 - [14 — AI command journal](docs/14-ai-command-journal.md) — what was asked, what changed
 - [Earlier tour screenshots](docs/evidence/tour/) — historical, before this review
 - [한국어 요약](README-ko.md)
