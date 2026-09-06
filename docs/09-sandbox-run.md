@@ -186,8 +186,9 @@ webhook endpoint, no tunnel) settled the defect report above:
   `refundableQuantity: 1`, a different account and payment method than the
   original report): `500 {"code":"UNKNOWN_ERROR","message":"Unhandled error"}`.
   Question 2 above is therefore answered: the failure is specific to the
-  empty-body (full-refund) path, and it remains a vendor-side bug worth
-  reporting.
+  total-refund path, and it remains a vendor-side bug worth reporting — see
+  the 2026-09-07 re-verification below, which pins down which half of the
+  endpoint is at fault.
 - **The item-level body succeeds.** One field-name subtlety: the purchase
   object exposes the item id as `items[].id`, while the refund request wants
   it as `itemId` (a wrong/empty id returns a clean
@@ -217,6 +218,32 @@ a real `refund.processed` that the handler accepted and acted on; a partial
 refund on the wire is still unseen.
 
 ---
+
+### Re-verified 2026-09-07 — the total-refund path, not the empty body
+
+Before submission the claim was re-tested on a purchase completed that day
+(`04eecc95-5a3a-4dda-a467-e2942228e866`, KRW 4,900, Kakao Pay through Stripe
+test), deliberately looking for a way in which the fault would be ours:
+
+| Request body | Result |
+|---|---|
+| `{}` | `500 UNKNOWN_ERROR` |
+| `{"fee": 0}` — the documented total-refund shape | `500 UNKNOWN_ERROR` |
+| `{"items": []}` | `500 UNKNOWN_ERROR` |
+| `{"fee": "x"}` | `400 INVALID_REQUEST` · `fee must be number`, `items must have required property` |
+| no body at all | `415 INVALID_REQUEST` · `unsupported media type undefined` |
+| `{"items":[{"itemId": "<items[].id>", "quantity": 1}]}` | `201`, `refund.processed` delivered, entitlement revoked |
+
+The `400` and `415` rows are the point. The endpoint validates request bodies
+and names both branches of its own `anyOf` when one is malformed, so `{}` and
+`{"fee": 0}` pass validation and then fail inside the handler. The [refund
+guide](https://docs.neonpay.com/docs/refunds) describes a total refund as
+taking an optional `fee` that defaults to zero, which makes both of those
+bodies the documented way to request one. So the narrower reading — "the empty
+body was malformed" — does not hold: what fails is the **total-refund path**,
+on its documented request, while partial refunds on the same purchase succeed.
+A non-zero `fee` was not tried; it would have consumed the only refundable
+purchase.
 
 ## Still unverified after this run
 

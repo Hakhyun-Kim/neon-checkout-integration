@@ -20,9 +20,13 @@ ones. These are the questions that still affect production behavior.
 3. **Refunds and disputes.** Partially resolved 2026-09-06 ([09](09-sandbox-run.md)
    addendum): item-level refunds (`{"items":[{"itemId": purchase.items[].id,
    "quantity": n}]}`) succeed, and a real `refund.processed` revoked the
-   entitlement end to end. Still for Neon: the **empty-body full-refund path
-   returns 500** in sandbox (Console and API alike), and the purchase object
-   names the id `items[].id` while the refund request wants `itemId`. Disputes
+   entitlement end to end. Still for Neon: the **total-refund path
+   returns 500** in sandbox (Console and API alike) — `{}` and the documented
+   `{"fee": 0}` both, while the same endpoint answers `400`/`415` cleanly for
+   genuinely malformed bodies, so this is a handler failure and not a rejected
+   request ([09](09-sandbox-run.md), 2026-09-07 re-verification). The purchase
+   object also names the id `items[].id` while the refund request wants
+   `itemId`. Disputes
    remain untriggerable from the merchant side — define whether they revoke on
    open or final loss.
 4. **Production operations.** Confirm secret rotation overlap, outbound API rate
