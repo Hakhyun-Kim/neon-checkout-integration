@@ -14,6 +14,40 @@ snapshots. The web build joins with `?dedicated=1`; the `clients/` directory
 carries Unity and Unreal protocol smoke tests written to the same contract.
 No game rule runs client-side in this mode.
 
+## What exists today, precisely (2026-09-06 review)
+
+"Dedicated server" normally means a process that simulates the *players'*
+inputs and that engine clients render as a scene. This build is not there
+yet, and the word should be read narrowly:
+
+| Usually expected | This build, now | Where in the game repo |
+|---|---|---|
+| Server simulates what players do | The server simulates what **its own bot** does; no client input reaches the engine | `dedicated/host.mjs` (drives `src/bot.js`) |
+| Clients send game actions | Client→server messages are `hello`, `ping`, `command` (`pause`/`resume`/`speed`/`restart`) and `store` only | `dedicated/PROTOCOL.md` |
+| "Play" happens through the server | **Try the game** disconnects and starts a local client-mode game | `src/main.js` (`onTryGame`) |
+| Unity/Unreal clients render the session | `clients/` holds protocol smoke tests (connect, `welcome`, snapshot fields, forbidden `command`, `store` catalog); nothing renders, and neither file has been executed in an engine | `clients/README.md` |
+| Hosted checkout returns to the server-mode view | A hosted (non-mock) return lands on the client-mode URL | `server/store-api.mjs` (`successUrl`) |
+
+What is real and gated by `npm run dedicated:check`: one authoritative
+simulation broadcasting snapshots/events/decisions, key-authenticated
+session control, and the store gateway (catalog, checkout, fulfil, refund,
+shared cosmetics) against a real in-process payment service. So, today: a
+**server-authoritative spectator broadcast plus a store gateway** — the
+payment topology below is shipped, the multiplayer sense of "dedicated" is
+not.
+
+Next, in order, with what each needs:
+
+1. **Player input through the server** — a client→server game-action
+   message in `PROTOCOL.md`, the host gating its bot decision behind the
+   controller's intent, validation against the same engine commands, and a
+   conformance case in `scripts/dedicated-check.mjs`.
+2. **An engine viewer** — Unity or Unreal rendering `snapshot.enemies` /
+   `snapshot.field` into a scene keyed on entity ids and mapping `decision`
+   to captions, executed inside the engine at least once.
+3. **Gateway-mode hosted return** — `successUrl` carrying `?dedicated=1`
+   (and the key) so a real Neon return rejoins the server view.
+
 ## Run it
 
 Requires Node 22.9+. From a `constellation-defense` checkout:
@@ -131,4 +165,6 @@ checkout still opens Neon's payment page in the player's browser — "one
 socket" applies to API traffic, not to the redirect that is the point of
 Hosted checkout. A hosted-mode return currently lands on the client-mode
 URL; gateway-mode return routing is the recorded next seam, and the
-credential-free mock lifecycle runs entirely in-modal.
+credential-free mock lifecycle runs entirely in-modal. The `U` node in the
+target diagram above is aspirational: today it is a smoke test, not a
+viewer (see the table at the top of this page).

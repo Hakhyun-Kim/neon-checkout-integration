@@ -85,7 +85,11 @@ http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 (`start-dedicated.bat` / `./start-dedicated.command`). 이 모드에서 서버는
 **상점 게이트웨이**이기도 합니다: 상점 호출이 같은 소켓을 타고 계정 신원과
 함께 결제 서비스로 중계되고, 지급된 장식은 모든 관전자의 공유 성에
-나타납니다. 실행법·설계·두 모드의 결제 토폴로지·검증 기록은
+나타납니다. 다만 "dedicated"는 아직 좁게 읽어야 합니다: 서버는 공유 봇
+정책으로 **혼자** 플레이한 결과를 방송하고, 프로토콜에 플레이어 행동
+메시지가 없어 서버를 통해 플레이하는 사람은 없으며, Unity/Unreal 파일은
+장면을 그리는 뷰어가 아니라 프로토콜 스모크 테스트입니다. 실행법·설계·두
+모드의 결제 토폴로지·지금 되는 것과 다음 단계·검증 기록은
 [13 — Dedicated server](docs/13-dedicated-server.md) 참조.
 
 샌드박스 연결 절차는 [docs/07-sandbox-checklist.md](docs/07-sandbox-checklist.md)에
