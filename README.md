@@ -25,12 +25,11 @@ to install/build and open the mock tour. It selects mock mode without overwritin
 an existing `.env`.
 
 Open [the English checkout inspector](http://127.0.0.1:8642/?lang=en&demo=expert&tour=neon&mute).
-It replaced the earlier scripted 13-step tour (2026-09-05): a panel observes
-the ordinary store while you buy — five stages advance from real store events,
-with source excerpts from the running build, live redacted HTTP evidence,
-three independently refundable castle cosmetics delivered on the 3D castle,
-and per-item test refunds. Purchases persist across reloads by design; use
-**Test refund** (or delete `.data/`) to reset.
+A panel watches the ordinary store while you buy: five stages advance from
+real store events, with source excerpts from the running build, redacted HTTP
+evidence, three castle cosmetics delivered on the 3D castle, and per-item test
+refunds. Purchases persist across reloads; **Test refund** (or deleting
+`.data/`) resets.
 
 **Mock mode takes no payment and does not open Neon's hosted page.** It uses the
 same fulfillment/revocation repository methods but bypasses valid signature
@@ -39,12 +38,10 @@ verification. For the normal click-and-return flow, open
 and check **Owned** and the HUD flag. Use a fresh browser identity if already owned.
 
 For Neon sandbox setup, follow [07 — Sandbox checklist](docs/07-sandbox-checklist.md).
-The [recorded sandbox run](docs/09-sandbox-run.md) documents two completed purchases
-and signed fulfillment — and, as of 2026-09-06, a **real sandbox refund**: the
-empty-body refund still 500s (a reported vendor bug), but the item-level body
-succeeds, and the `refund.processed` webhook revoked the entitlement about one
-second later. Details and the exact body shape are in the
-[resolution addendum](docs/09-sandbox-run.md).
+[09 — Sandbox run](docs/09-sandbox-run.md) records the purchases with signed
+fulfilment and, since 2026-09-06, a refund end to end: the item-level body
+works and `refund.processed` revokes about a second later; the empty-body
+variant returns 500 and is reported.
 
 ## Design
 
@@ -77,22 +74,20 @@ sequenceDiagram
 - **Game impact:** additive UI, localization and startup wiring; no integration
   changes to `src/engine/`, `src/tactics/` or `src/balance/`.
 
-Accounts, saves, Firestore and the inspector grew beyond the initial checkout
-example. The entire integration is not a 350-line SDK. See the
-[current review](docs/12-review.md) for portability boundaries and production gaps,
-including simultaneous pending purchases, cross-origin market selection and
-API-only saves.
+The integration grew past the initial checkout example (accounts, saves,
+Firestore, the inspector). [12 — Review](docs/12-review.md) records the
+portability boundaries and the production gaps: simultaneous pending
+purchases, cross-origin market selection, API-only saves.
 
 ## Dedicated server mode
 
-The game also runs as an authoritative server process with every client — the
-web build, and Unity/Unreal samples — rendering its snapshots
-(`start-dedicated.bat` / `./start-dedicated.command`). In that mode the
-server is also the **only client-facing edge**: store calls ride the same
-WebSocket and are brokered to the payment service with the connection's
-account identity, and cosmetics delivered through it appear on the shared
-castle for every viewer. Run instructions, the design, both payment
-topologies (client mode and server mode) and the verification record are in
+The game also runs as an authoritative server process, with every client (the
+web build, the Unity/Unreal samples) rendering its snapshots:
+`start-dedicated.bat` / `./start-dedicated.command`. The server is then the
+**only client-facing edge**: store calls ride the same WebSocket and are
+brokered to the payment service with the connection's identity, and delivered
+cosmetics appear on the shared castle for every viewer. Run instructions,
+design, both payment topologies and the verification record:
 [13 — Dedicated server](docs/13-dedicated-server.md).
 
 ## Verify
