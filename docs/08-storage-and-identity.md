@@ -203,11 +203,17 @@ server is unchanged. See [00 — Integration guide](00-integration-guide.md).
 
 ---
 
-## Deployment, deferred
+## Deployment, deferred (then done)
+
+> Update 2026-09-06: carried out after all. `deploy/cloud-run.sh` deploys
+> `server/index.mjs` to Cloud Run (Seoul) with Firestore and the keys in Secret
+> Manager; purchase and refund webhooks have landed there
+> ([09](09-sandbox-run.md)). The reasoning below is why it waited until the
+> ledger was concurrency-safe.
 
 Cloud Run deployment was prepared — `Dockerfile`, `HOST` binding, `PUBLIC_URL`
 falling back to the request origin so there is no chicken-and-egg with the
-deployed URL — and then **not carried out**.
+deployed URL — and then, at that point, **not carried out**.
 
 The reason is the same one that started this document. Deployment was buying a
 public webhook endpoint, and an already-running tunnel buys that too. Everything

@@ -1,4 +1,10 @@
-# The guided tour, step by step
+# The guided tour, step by step (historical)
+
+> Captured before 2026-09-05. That day the automatic 13-step tour was replaced
+> by the five-stage checkout inspector (`src/app/neontour.js`); the `stage.hurry`
+> / `stage.fall` hooks and `flowSvg()` named below no longer exist, and purchases
+> are made by the viewer, not the tour. The current run instructions are in the
+> [README](../../../README.md).
 
 Thirteen screenshots of `?tour=neon`, captured in order from one run of the
 English build. The bot is playing the game for real in the background the whole

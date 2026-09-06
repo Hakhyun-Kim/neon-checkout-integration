@@ -16,8 +16,10 @@ frozen table, server-side, and never recomputed anywhere else.
 
 Related: `Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' })`
 yields `₩4,900` with no decimals. Any display path that hardcodes two decimals
-will look broken to a Korean player. (This repo currently hardcodes the display
-string — see the hardening list in [03](03-decisions-and-assumptions.md).)
+will look broken to a Korean player. (Here the string is derived with
+`Intl.NumberFormat` in `server/catalog.mjs`, and the test asserts against
+`formatPrice()`, so the integer and the display cannot drift — see
+[03](03-decisions-and-assumptions.md).)
 
 ## 2. Payment rails Korean players actually expect
 
@@ -57,13 +59,13 @@ what the merchant-of-record split of responsibility is.
 ## 4. Item design carries legal weight
 
 Korea's game legislation requires probability disclosure for 확률형 아이템. This
-is a large part of why the item sold here is a single, deterministic, cosmetic
-banner: it stays entirely outside that regime. Selling gacha through a
+is a large part of why the items sold here are deterministic cosmetics (a banner
+and two castle decorations): they stay entirely outside that regime. Selling gacha through a
 web shop needs the disclosure surface designed alongside the checkout, not after.
 
 ## 5. Consumer protection and refunds
 
-Korea's e-commerce law provides a withdrawal period, with carve-outs for digital
+Korea's e-commerce law provides a withdrawal period (청약철회), with carve-outs for digital
 content that has already been supplied or consumed — the boundary matters and is
 exactly where disputes land. **To verify:** whether Neon as merchant of record
 handles the withdrawal notice and refund obligation, or whether the game must surface its own policy in-game. Also worth confirming: 현금영수증 (cash receipt)

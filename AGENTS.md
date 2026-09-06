@@ -23,8 +23,9 @@ cp .env.example .env      # mock mode is already on — no credentials needed
 npm run serve
 ```
 
-Then open the guided tour, which demonstrates the whole payment lifecycle with
-live server responses:
+Then open the checkout inspector: a bot plays the game (`demo=expert`) while the
+panel explains the store with source excerpts and live server responses; you make
+the purchases and refunds yourself:
 
 ```
 http://127.0.0.1:8642/?lang=en&demo=expert&tour=neon&mute

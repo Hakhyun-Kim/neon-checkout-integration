@@ -112,8 +112,11 @@ ledger. This is a deliberately small stand-in for a database; see
 | `POST` | `/api/store/market` | Sets the billing country explicitly. The only way language-independent country changes. |
 | `GET` | `/api/store/entitlements` | What this player owns. Polled after checkout return. |
 | `POST` | `/api/store/checkout` | Creates the Neon checkout, records the pending intent, returns `redirectUrl`. |
-| `POST` | `/api/webhooks/neon` | Verifies `x-neon-digest`, validates, fulfills. |
-| `POST` | `/api/store/mock-complete` | **Mock mode only.** Simulates the webhook locally. |
+| `POST` | `/api/webhooks/neon` | Verifies `x-neon-digest`, validates, fulfills or revokes. |
+| `POST` | `/api/store/refund` | Account-checked item-level refund request to Neon (hosted mode). Revocation happens only through the `refund.processed` webhook. |
+| `POST` | `/api/store/mock-complete` · `/api/store/mock-refund` | **Mock mode only.** Feed a synthetic purchase or refund through the same `fulfill` / `revoke` path. |
+| `POST` | `/api/account/transfer-code` · `/api/account/claim` | Account transfer between devices ([11](11-accounts-and-saves.md)). |
+| `GET` / `PUT` | `/api/save` | Versioned server save ([11](11-accounts-and-saves.md)). |
 
 ## Player identity
 

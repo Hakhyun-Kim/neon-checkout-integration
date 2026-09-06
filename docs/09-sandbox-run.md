@@ -1,9 +1,10 @@
-# 09 — Sandbox run: what it proved, and one blocker
+# 09 — Sandbox run: what it proved, the refund defect, and its resolution
 
 A live run against the Neon sandbox on 2026-09-04, through a public tunnel with
-real webhook delivery. Two purchases completed and were fulfilled. Refunds could
-not be tested end to end because every refund attempt failed server-side — that
-is written up as a defect report below, with the questions it raises.
+real webhook delivery. Two purchases completed and were fulfilled. Refunds failed
+server-side that day; that is written up as a defect report below, with the
+questions it raised. On 2026-09-06, against the Cloud Run deployment, an
+item-level refund succeeded end to end (resolution addendum at the end).
 
 Purchase identifiers are sandbox values. Account bearer credentials are redacted from current text; earlier history and screenshots were not rewritten.
 
@@ -58,6 +59,12 @@ Several open questions were settled by looking at what actually arrived.
 
 카카오페이, 네이버페이 and 삼성페이 are live for KR. This is the first question for a Korean launch, and the answer is good.
 
+One onboarding observation from the same page: Google Pay is preselected on the
+KR page and opens the real wallet sheet with the tester's real cards, so a first
+sandbox purchase looks like a live charge. The page's test-environment label and
+`isSandbox: true` on every webhook are the reassurance; Kakao Pay and Naver Pay
+give a lighter test approval. Worth one line in any note handed to QA before a Korean test pass.
+
 **Tax is inclusive, 10%.** The checkout page showed `세금에 ₩445 포함`, and
 `GET /purchases/{id}` confirms `taxAmount: 44500`, `taxRate: 0.1`,
 `totalAmount: 490000`. The displayed price is what the player pays.
@@ -71,11 +78,13 @@ Several open questions were settled by looking at what actually arrived.
 
 ₩4,900 settles as $2.94 net after a $0.37 fee. Worth knowing before pricing in KRW.
 
-**`checkoutId` exists, but not where you would look for it.**
-`POST /checkout` returns only `{ token, redirectUrl }`. The `checkoutId`
-(`61f11705-…`) appears on the purchase object retrieved later. This caused a real
-defect on our side: we were recording `checkoutId: undefined`, which a JSON store
-drops silently and Firestore rejects outright.
+**The checkout id is called `id`.** *Corrected 2026-09-06.* This section used
+to say `POST /checkout` returns only `{ token, redirectUrl }`. A direct sandbox
+call on 2026-09-06 returned `{ id, token, redirectUrl, externalProvider }`, as
+the reference documents; our adapter was reading `checkoutId`, so it recorded
+`undefined`, which a JSON store drops silently and Firestore rejects outright.
+The purchase object exposes the same value as `checkoutId` (`61f11705-…`). The
+adapter now reads `id` first.
 
 **Partial refunds are item-level.** `POST /purchases/{id}/refund` accepts
 `items: [{ itemId, quantity }]`, and the purchase object exposes the `itemId`
@@ -199,18 +208,21 @@ X-API-KEY: <sandbox key>
   real Neon-produced events — the synthetic-event caveat above is history
   for the refund path, and remains only for disputes.
 
-**What this does not prove.** It does not confirm the shape of the event Neon
-actually sends — field names, whether `accountId` is populated, whether
-`externalReferenceId` is null in practice as the documentation example suggests, or
-what a partial refund looks like on the wire. Our handler is verified against the
-documented schema. The schema itself is still taken on trust, and will stay that
-way until a refund succeeds.
+**What this does not prove (as of 2026-09-04).** It did not confirm the shape of
+the event Neon actually sends — field names, whether `accountId` is populated,
+whether `externalReferenceId` is null in practice as the documentation example
+suggests, or what a partial refund looks like on the wire. Our handler was
+verified against the documented schema until the 2026-09-06 run above delivered
+a real `refund.processed` that the handler accepted and acted on; a partial
+refund on the wire is still unseen.
 
 ---
 
 ## Still unverified after this run
 
-- A real `refund.processed` event (blocked by the defect above).
+- ~~A real `refund.processed` event (blocked by the defect above).~~ Resolved
+  2026-09-06 (addendum): a real event arrived and revoked; the empty-body refund
+  path still returns 500.
 - `dispute.opened` / `dispute.closed` — version 1, and carrying only a
   `purchaseId`, so revocation policy for chargebacks remains undesigned.
 - Whether `bundleContents` and `taxCode` are accepted on the **checkout request**.

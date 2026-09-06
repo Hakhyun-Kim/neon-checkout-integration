@@ -43,8 +43,9 @@ review pass.
 > "Three passes, not mixed: cross-check every claim against Neon's docs; read
 > the code as an attacker; run it."
 
-- 18 defects across four methods, none overlapping
-  ([03](03-decisions-and-assumptions.md)). Eleven were in code the AI had
+- 18 defects across four methods, none overlapping: 3 from Neon's docs (plus one
+  gap identified), 11 from the attacker read, 2 from running it locally, 2 from
+  the live sandbox ([03](03-decisions-and-assumptions.md)). Eleven were in code the AI had
   written and were found by the same AI re-reading it as an attacker. One test
   asserted the hardcoded price the same pass had introduced.
 - Pattern: the same model finds different defects under a different role.
@@ -166,7 +167,7 @@ review pass.
 
 | Verified | Not yet |
 |---|---|
-| Sandbox purchase and refund end to end through the webhooks (Cloud Run) | Unity / Unreal samples executed (neither engine installed) |
-| The shared link, full lifecycle, clicked through by someone else | Docker image executed (no Docker on the build machine) |
+| Sandbox purchase and refund end to end through the webhooks (Cloud Run) | Unity / Unreal samples executed inside an engine (protocol smoke tests only; not yet run) |
+| The shared link, full lifecycle, clicked through by hand on the live infrastructure, not by the AI | Docker image executed (no Docker on the build machine) |
 | `dedicated:check` 29 assertions and the two-tab gateway run | Physical macOS run (ubuntu CI covers POSIX) |
 | Full gate and the 540-run balance baseline unchanged | Player input through the server; dispute events |

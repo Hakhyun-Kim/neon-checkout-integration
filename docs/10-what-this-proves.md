@@ -69,8 +69,9 @@ verified against the recorded intent including the amount. Full account in
 [evidence](evidence/).
 
 The live run also caught two defects that a passing suite on two backends had
-agreed were fine: a field production never sends (`checkoutId`), and an API that
-would sell a permanent item twice.
+agreed were fine: a field read under the wrong name (the create response calls
+it `id`; the code read `checkoutId` and stored `undefined`, corrected
+2026-09-06), and an API that would sell a permanent item twice.
 
 For concurrency: `JsonRepository` gets its idempotency from a promise queue inside
 one process, which stops being true the moment there is more than one instance.
@@ -114,10 +115,12 @@ kind of client is calling it.
   explicit allowlist without `Allow-Credentials` — so a game on a CDN, a Unity
   client, or a launcher all reach the same service without it changing.
 
-**Not covered.** Nothing is deployed. The reasoning is in
-[08](08-storage-and-identity.md): deployment was buying a public webhook endpoint,
-and a tunnel bought that too. The `Dockerfile` runs the service entry point, so
-deploying later is a command rather than a project.
+**Not covered at this stage, done later.** At this stage nothing was deployed;
+the reasoning is in [08](08-storage-and-identity.md): deployment was buying a
+public webhook endpoint, and a tunnel bought that too. On 2026-09-06 the service
+was deployed to Cloud Run (Seoul) with Firestore and Secret Manager by
+`deploy/cloud-run.sh`, and purchase and refund webhooks were received there
+([09](09-sandbox-run.md), resolution addendum).
 
 ---
 

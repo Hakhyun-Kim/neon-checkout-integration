@@ -92,3 +92,25 @@ Same-day follow-ups, in order:
 
 Not verified here: full accessibility-label translation. Existing screenshots
 remain historical.
+
+## Second review — 2026-09-06, before sending
+
+A last adversarial pass over `server/` and the deploy script, after the live run.
+Each row has a test in `scripts/store-server-check.mjs` or a step in
+`deploy/cloud-run.sh`; the JSON suite and the Firestore suite (emulator) both pass.
+
+| Found | Fix |
+|---|---|
+| The create-checkout response names the checkout id `id`; the code read `checkoutId` and stored `undefined`. This had been on the question list for Neon in [05](05-open-questions-for-neon.md) as "no checkoutId in the response". | Read `id` first; the check asserts the recorded id and the 201 body. |
+| The amount check compared against the original currency (`initialCurrency`), so after a country switch on the hosted page a purchase settled in another currency would have been refused as `amount does not match` and acknowledged 200: paid, never granted. | Compare only when the settled currency equals the checkout currency; record `currencySwitched`; a KRW intent settled as 499 USD is now granted and flagged. |
+| A second paid purchase of an already-owned permanent item overwrote the grant, and refunding either purchase removed the item. | The first grant stays; the duplicate is recorded with `duplicateGrant: true`; revoke removes the entitlement only for the purchase that granted it. |
+| Account ids are bearer credentials and were written to logs. | Logs carry a 12-character SHA-256 handle. |
+| A malformed percent-encoded cookie from any app on the origin threw inside `decodeURIComponent` and turned every store call into a 500. | Decode defensively and split on the first `=`. |
+| `expiresAt` was written on intents, dedup records, limiter docs and transfer codes, but no Firestore TTL policy existed, so they accumulated. | The deploy script enables TTL on the four collection groups (idempotent). |
+| A redeploy without `--allowed-origins` reset CORS to the local defaults and silently broke the shared link at its first fetch. | The Pages origin is in the default; the smoke run checks the preflight. |
+| A carried `returnPath` query could place its own `api=` ahead of the server's; the cookie `Secure` flag came from `PUBLIC_URL` rather than the request. | Reserved keys are stripped from the carried query; `Secure` follows `x-forwarded-proto`. |
+
+Still open, unchanged: the checkout rate limit is keyed on the self-issued
+account id (an address-based limiter is next), and a second pending checkout for
+the same permanent item is still accepted until question 1 in
+[05](05-open-questions-for-neon.md) has an answer.

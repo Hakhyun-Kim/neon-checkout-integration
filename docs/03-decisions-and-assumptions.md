@@ -29,10 +29,11 @@ payments into a codebase that already has rules. This one had three that mattere
 The server was written so that the choice of checkout surface is a client
 decision, not an architectural one. That was the point.
 
-## Why a cosmetic, and only one
+## Why cosmetics, and only cosmetics
 
-`CELESTIAL_BANNER` is permanent, purely visual, and has no combat effect. Three
-reasons:
+The three SKUs (`CELESTIAL_BANNER`, `AURORA_SPIRES`, `GOLDEN_SENTINELS`; the
+banner was the only one until 2026-09-05) are permanent, purely visual, and have
+no combat effect. Three reasons:
 
 1. **Fulfillment is provable.** A cosmetic either appears or does not. A currency
    pack would blur "did fulfillment work" with "did the economy apply it".
@@ -144,8 +145,9 @@ and asserts:
 - a bad or absent signature returns `403`;
 - checkout creation is rate-limited.
 
-It is wired into the project's existing `npm run check` gate — 20-plus
-verification scripts plus the build — which passes.
+It is wired into the project's existing `npm run check` gate — 29 verification
+scripts plus the build (listed in the code repo's `scripts/README.md`) — which
+passes.
 
 Beyond the automated gate, the flow was driven in a real browser: buy → redirect →
 return → poll → owned, with the network log, the server log, and the ledger file

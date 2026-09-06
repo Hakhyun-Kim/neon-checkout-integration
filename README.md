@@ -1,7 +1,7 @@
 # Neon Hosted Checkout in Constellation Defense
 
-A payment integration added to an existing 3D match-3 defense game. Buy one
-permanent cosmetic banner and receive it after a signed purchase webhook.
+A payment integration added to an existing 3D match-3 defense game. Buy one of
+three permanent castle cosmetics and receive it after a signed purchase webhook.
 The game engine and combat rules do not depend on payments.
 
 **Source:** [constellation-defense](https://github.com/Hakhyun-Kim/constellation-defense).
@@ -25,7 +25,8 @@ to install/build and open the mock tour. It selects mock mode without overwritin
 an existing `.env`.
 
 Open [the English checkout inspector](http://127.0.0.1:8642/?lang=en&demo=expert&tour=neon&mute).
-A panel watches the ordinary store while you buy: five stages advance from
+A bot plays the game (`demo=expert`) until you take over, and a panel watches
+the ordinary store while you buy: five stages advance from
 real store events, with source excerpts from the running build, redacted HTTP
 evidence, three castle cosmetics delivered on the 3D castle, and per-item test
 refunds. Purchases persist across reloads; **Test refund** (or deleting

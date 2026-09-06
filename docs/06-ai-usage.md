@@ -17,7 +17,7 @@ output was verified.
 - using a game I had already shipped rather than a starter pack, and accepting the
   constraints that came with it;
 - Hosted checkout as the surface, with a server boundary reusable by other clients; Embedded and Direct adapters remain unimplemented;
-- a single deterministic cosmetic as the SKU, chosen for provable fulfillment and
+- deterministic cosmetics as the SKUs, chosen for provable fulfillment and
   to stay outside Korea's probability-disclosure regime;
 - the trust boundary — client sends a SKU, never a price; only a verified webhook
   grants;

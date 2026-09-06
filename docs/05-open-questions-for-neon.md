@@ -3,11 +3,16 @@
 Updated 2026-09-05. Earlier open questions mixed historical gaps with current
 ones. These are the questions that still affect production behavior.
 
-1. **Checkout lifecycle and duplicate sessions.** How should Hosted clients obtain
-   the checkout ID used by the documented GET/expire endpoints when the recorded
-   sandbox creation response contains redirectUrl and token but no checkoutId?
-   Which states are safe to replace, and what guarantees apply when the same
-   account opens a second checkout for the same permanent SKU?
+1. **Checkout lifecycle and duplicate sessions.** Which checkout states are safe
+   to expire through the documented expire endpoint, and what happens when the
+   same account opens a second checkout for the same permanent SKU before the
+   first settles: is there a server-side guard, or is that the integrator's to
+   build? (Today the service refuses a checkout only after a grant exists.)
+   *Corrected 2026-09-06:* an earlier version of this question said the
+   creation response carried no checkout id. It does: the field is `id`
+   (`{ id, token, redirectUrl, externalProvider }`, confirmed with a direct
+   sandbox call). Our adapter had been reading `checkoutId`; fixed the same day
+   in `server/store-api.mjs`.
 2. **Reconciliation.** What is the recommended recovery path when a signed
    purchase arrives without a matching local intent, or checkout creation returns
    an uncertain network result? The current implementation logs unknown purchase
