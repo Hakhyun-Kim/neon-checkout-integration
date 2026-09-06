@@ -1,4 +1,4 @@
-# 13 — Dedicated server: one authoritative process, many viewers
+# 13 — Store gateway / server mode: one authoritative process, many viewers
 
 Added 2026-09-05. Source: `dedicated/` in
 [constellation-defense](https://github.com/Hakhyun-Kim/constellation-defense);

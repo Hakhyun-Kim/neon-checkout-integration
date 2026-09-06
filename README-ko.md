@@ -80,17 +80,17 @@ http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 이전 투어의 단계별 스크린샷은 역사 기록으로 남아 있습니다:
 [docs/evidence/tour/](docs/evidence/tour/)
 
-**Dedicated 서버 모드** — 게임을 권위 서버 프로세스로 돌리고 웹/엔진
-클라이언트가 스냅샷을 렌더링하는 모드도 있습니다
-(`start-dedicated.bat` / `./start-dedicated.command`). 이 모드에서 서버는
-**상점 게이트웨이**이기도 합니다: 상점 호출이 같은 소켓을 타고 계정 신원과
-함께 결제 서비스로 중계되고, 지급된 장식은 모든 관전자의 공유 성에
-나타납니다. 다만 "dedicated"는 아직 좁게 읽어야 합니다: 서버는 공유 봇
-정책으로 **혼자** 플레이한 결과를 방송하고, 프로토콜에 플레이어 행동
-메시지가 없어 서버를 통해 플레이하는 사람은 없으며, Unity/Unreal 파일은
-장면을 그리는 뷰어가 아니라 프로토콜 스모크 테스트입니다. 실행법·설계·두
-모드의 결제 토폴로지·지금 되는 것과 다음 단계·검증 기록은
-[13 — Dedicated server](docs/13-dedicated-server.md) 참조.
+**과제 밖 — 서버 측 상점 게이트웨이 (관전 데모)** — 서버 프로세스 하나가
+공유 봇 정책으로 **혼자** 플레이하고, 브라우저는 그 스냅샷을 그리는 관전자가
+되는 모드도 있습니다(`start-dedicated.bat` / `./start-dedicated.command`).
+이때 서버는 상점의 **유일한 클라이언트 접점**입니다: 상점 호출이 같은 소켓을
+타고 계정 신원과 함께 결제 서비스로 중계되고, 지급된 장식은 모든 관전자의
+공유 성에 나타납니다. 멀티플레이어 의미의 dedicated 서버는 아직 아닙니다:
+프로토콜에 플레이어 행동 메시지가 없고, Unity/Unreal 파일은 장면을 그리는
+뷰어가 아니라 프로토콜 스모크 테스트입니다. 진짜 dedicated 서버(서버 경유
+플레이어 입력)와 그 위의 Unity/Unreal 클라이언트가 다음 단계입니다.
+실행법·설계·두 모드의 결제 토폴로지·지금 되는 것과 다음 단계·검증 기록은
+[13 — Store gateway / server mode](docs/13-dedicated-server.md) 참조.
 
 샌드박스 연결 절차는 [docs/07-sandbox-checklist.md](docs/07-sandbox-checklist.md)에
 단계별로 있습니다.
@@ -116,4 +116,4 @@ http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 | [10 — What this proves](docs/10-what-this-proves.md) | 단계별로 무엇이 증명됐고 무엇이 아닌지 |
 | [11 — Accounts & saves](docs/11-accounts-and-saves.md) | 인계 코드 · 서버 저장본 · 충돌 처리 |
 | [12 — Current review](docs/12-review.md) | 최신 검토 · 이식 경계 · 남은 한계 |
-| [13 — Dedicated server](docs/13-dedicated-server.md) | 권위 서버 실행법 · 설계 · 결제 게이트웨이 방향 |
+| [13 — Store gateway / server mode](docs/13-dedicated-server.md) | 관전 데모 실행법 · 설계 · 상점 게이트웨이 · 지금 되는 것 vs 다음 단계 |
