@@ -16,6 +16,9 @@ Neon **Hosted Checkout**을 붙였습니다. 판매 품목은 전투에 영향�
 게임 최초의 서버 권한 영역이 생겼습니다. 서버가 없는 GitHub Pages 배포에서는
 상점 버튼이 조용히 사라집니다.
 
+> **처음 읽는다면 [15 — 전체 흐름 그림으로 보기](docs/15-flow-ko.md)를 먼저 보세요.**
+> 다이어그램 14개로 구매·웹훅·환불·실패 처리를 처음부터 끝까지 따라갑니다.
+
 ## 흐름
 
 1. 클라이언트가 `POST /api/store/checkout`에 **SKU와 표시 언어만** 보냅니다.
@@ -117,3 +120,5 @@ http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 | [11 — Accounts & saves](docs/11-accounts-and-saves.md) | 인계 코드 · 서버 저장본 · 충돌 처리 |
 | [12 — Current review](docs/12-review.md) | 최신 검토 · 이식 경계 · 남은 한계 |
 | [13 — Store gateway / server mode](docs/13-dedicated-server.md) | 관전 데모 실행법 · 설계 · 상점 게이트웨이 · 지금 되는 것 vs 다음 단계 |
+| [14 — AI command journal](docs/14-ai-command-journal.md) | 지시별 기록 — 무엇을 요청했고 무엇이 바뀌었나 |
+| **[15 — 전체 흐름 그림으로 보기](docs/15-flow-ko.md)** | **한국어 그림 설명서** — 구매 흐름 · 리다이렉트/웹훅 레이스 · 웹훅 응답 코드 · 환불 · 실패 시나리오 |

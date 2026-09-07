@@ -119,5 +119,7 @@ To include Firestore, start its emulator and set `FIRESTORE_EMULATOR_HOST` befor
 - [12 — Current review and limitations](docs/12-review.md)
 - [13 — Store gateway / server mode](docs/13-dedicated-server.md)
 - [14 — AI command journal](docs/14-ai-command-journal.md) — what was asked, what changed
+- [15 — 전체 흐름 그림으로 보기](docs/15-flow-ko.md) — Korean visual walkthrough: checkout, the
+  redirect/webhook race, webhook response codes, refunds, failure modes
 - [Earlier tour screenshots](docs/evidence/tour/) — historical, before this review
 - [한국어 요약](README-ko.md)
