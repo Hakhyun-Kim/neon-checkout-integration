@@ -75,22 +75,32 @@ Billing country is resolved **server-side**, in this precedence:
 1. an explicit player choice, stored in a cookie (the picker in the store modal);
 2. a platform geo header (`cf-ipcountry`, `x-vercel-ip-country`, …), and only
    where `TRUST_GEO_HEADERS=1` declares that a proxy sets them and strips the
-   client's own copy — otherwise the header is caller-supplied input;
-3. `KR` as the default.
+   client's own copy — otherwise the header is caller-supplied input that lets
+   any caller choose its own tax jurisdiction;
+3. the region subtag of the browser's `Accept-Language` (`en-US` → `US`);
+4. `KR` as the default.
 
-**No language signal appears in that list, at any position.** An earlier draft
-derived country from the UI toggle, which declared a Korean player reading
-English to be in the US. The first correction replaced it with the region
-subtag of `Accept-Language`, which is the same mistake one layer down: a
-browser language is not a location, and with no CDN in front of the service it
-was in practice the *only* signal that fired, so an English browser in Seoul
-was billed as a US resident. `Accept-Language` now reaches Neon as
-`languageLocale` only. Where the player actually is should come from IP
-geolocation — Neon exposes localized pricing by IP — and that is not
-implemented here; until it is, the default market is the honest answer rather
-than a guess read off the request's language. Regression tests assert that
-`locale=en`, an `en-US` `Accept-Language`, and a forged `cf-ipcountry` on an
-untrusted deployment all leave the resolved country at `KR`.
+**The game's ko/en toggle is deliberately absent from that list, at any
+position.** An earlier draft derived country from the UI language, which
+declared a Korean player reading English to be in the US. The client no longer
+sends a country at all — a SKU and a display language, nothing else — so that
+conflation cannot be reintroduced from the browser.
+
+**Step 3 is a demo trade-off, and it is worth naming as one, because it is a
+weaker version of the same mistake.** A browser language is not a location:
+`en-US` is what an English-configured machine sends from Seoul as readily as
+from Seattle, and on this deployment — Cloud Run with no CDN in front, so no
+geo header ever arrives — it is the only inferred signal that ever fires. It
+declares a tax jurisdiction to a merchant of record on evidence that does not
+support the claim. It is kept because this build's first purpose is to be
+opened and bought from by a reviewer anywhere, who should meet a plausible
+currency without first finding the market picker; the picker overrides the
+inference and the choice persists. A production integration resolves location
+from IP — Neon exposes localized pricing by IP — and leaves `Accept-Language`
+to `languageLocale`. Regression tests cover both halves: an `en-US` browser
+resolves `US`, `ja-JP` falls through to the default, `locale=en` moves nothing,
+a forged `cf-ipcountry` is ignored until the deployment trusts its proxy, and
+an explicit selection outranks every inferred signal.
 
 ## successUrl must be the player's own origin
 
@@ -141,8 +151,10 @@ and asserts:
 - the catalogue is localized and priced by the server, with the display string
   derived from the integer;
 - switching UI language does **not** move the billing country;
-- neither `Accept-Language` nor a forged geography header moves the billing
-  country, an explicit choice does, and an unsupported country is rejected;
+- switching UI language does not move the billing country, the `Accept-Language`
+  region and an explicit choice both resolve it, a forged geography header does
+  not until the deployment trusts its proxy, and an unsupported country is
+  rejected;
 - a client-supplied `price`, `country`, and `currency` are all ignored;
 - a correctly signed `purchase.completed` is fulfilled;
 - the same event delivered twice grants once, and a *different* event pointing at
