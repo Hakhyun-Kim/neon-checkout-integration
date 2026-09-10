@@ -122,5 +122,8 @@ To include Firestore, start its emulator and set `FIRESTORE_EMULATOR_HOST` befor
 - [14 — AI command journal](docs/14-ai-command-journal.md) — what was asked, what changed
 - [15 — 전체 흐름 그림으로 보기](docs/15-flow-ko.md) — Korean visual walkthrough: checkout, the
   redirect/webhook race, webhook response codes, refunds, failure modes
+- [16 — Clients without a browser](docs/16-native-clients.md) — Unity, Unreal and
+  launchers: what changes in the last mile, why the game never has to watch the
+  checkout, and where the platform, not the engine, sets the limit
 - [Earlier tour screenshots](docs/evidence/tour/) — historical, before this review
 - [한국어 요약](README-ko.md)

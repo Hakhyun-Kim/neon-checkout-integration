@@ -226,6 +226,10 @@ Because the surface is a REST contract rather than an SDK, one backend can serve
 a web store, a game client, and a launcher at once. That is worth designing for
 even if you only ship one of them today.
 
+[16 — Clients without a browser](16-native-clients.md) expands this table: Neon's
+own in-game guidance, why the game never has to watch the checkout, the three
+last-mile patterns, and the platform constraints that matter more than the engine.
+
 ## 8. Where to go next
 
 - [01 — Architecture](01-architecture.md) — trust boundary and data model
@@ -233,3 +237,4 @@ even if you only ship one of them today.
 - [03 — Decisions](03-decisions-and-assumptions.md) — why each choice, and what is unfinished
 - [04 — Korean market notes](04-korea-market-notes.md) — KRW, local rails, minors, refunds
 - [07 — Sandbox checklist](07-sandbox-checklist.md) — the runbook for a first real purchase
+- [16 — Clients without a browser](16-native-clients.md) — Unity, Unreal, launchers, and the platform limits

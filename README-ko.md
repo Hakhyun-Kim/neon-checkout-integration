@@ -134,3 +134,4 @@ http://127.0.0.1:8642/?demo=%EA%B3%A0%EC%88%98&tour=neon&mute
 | [13 — Store gateway / server mode](docs/13-dedicated-server.md) | 관전 데모 실행법 · 설계 · 상점 게이트웨이 · 지금 되는 것 vs 다음 단계 |
 | [14 — AI command journal](docs/14-ai-command-journal.md) | 무엇을 지시했고 무엇이 바뀌었는지 — 지시 단위 기록 |
 | **[15 — 전체 흐름 그림으로 보기](docs/15-flow-ko.md)** | **한국어 그림 설명서** — 구매 흐름 · 리다이렉트/웹훅 레이스 · 웹훅 응답 코드 · 환불 · 실패 시나리오 |
+| [16 — Clients without a browser](docs/16-native-clients.md) | 브라우저 없는 클라이언트 — Unity · Unreal · 런처의 마지막 한 구간, 게임이 결제를 지켜볼 필요가 없는 이유, 엔진이 아니라 플랫폼이 정하는 제약 |

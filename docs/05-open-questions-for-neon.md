@@ -42,6 +42,23 @@ ones. These are the questions that still affect production behavior.
 5. **Market rollout.** Confirm currently enabled Korean payment methods for the
    merchant account and checkout type; the methods in [09](09-sandbox-run.md) are
    observations from that sandbox run, not a universal availability guarantee.
+6. **Non-browser clients.** Raised 2026-09-10 while writing
+   [16](16-native-clients.md). Three questions a Unity, Unreal or launcher
+   integration hits that the web reference never does. (a) Does `successUrl`
+   accept a custom URI scheme (`mygame://purchase/return`) so a native client can
+   be deep-linked back, or must the return go through an `https` URL that
+   redirects? (b) What is the lifetime of the pre-authenticated checkout link,
+   and is it bound to the device that requested it? It is a bearer credential,
+   and the answer decides whether "buy on your phone, receive in the game" is a
+   supported flow or a hole. (c) Is there a short-URL or QR representation of a
+   checkout, for clients where typing a URL is impractical?
+7. **Alternative-payment posture in Korea.** Neon's published guidance on
+   opening checkout from inside a game app is written around US App Store and
+   Google Play rules. Korea prohibits forcing a single in-app payment system,
+   but this integration has not checked the current store policy text or
+   enforcement posture, and has never submitted a build. What does Neon
+   currently advise for a Korean mobile release, and are the Korean rails in
+   [09](09-sandbox-run.md) available on that path?
 
 ## Resolved or clarified
 
