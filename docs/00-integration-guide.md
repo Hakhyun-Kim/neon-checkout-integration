@@ -189,7 +189,7 @@ implementation. The symptom column is what you will actually see first.
 |---|---|---|---|
 | 1 | Webhooks arrive over and over for 36 hours | You returned `400`/`500` for something a retry can never fix | `200 {ignored: reason}` for permanent rejections; `5xx` only for transient failures |
 | 2 | "Payment succeeded but the player owns nothing" | `successUrl` is a different origin than the player was on, so the session cookie did not survive the redirect | Build `successUrl` from the origin the player is actually browsing. `localhost` and `127.0.0.1` are different origins |
-| 3 | Wrong currency, wrong payment methods, wrong tax | Country derived from UI language | Resolve country server-side: explicit choice → geo header → `Accept-Language` → default. Never the language toggle |
+| 3 | Wrong currency, wrong payment methods, wrong tax | Country derived from a language signal | Resolve country server-side: explicit choice → geo header from a trusted proxy → default. Never the UI toggle, and never `Accept-Language` — an English browser in Seoul is not a US resident. IP geolocation belongs at the top of that list |
 | 4 | Price is 100× off | Neon prices are 100× the base unit; currencies without a subunit (KRW, JPY) make this look like a typo | Encode the multiplier once, in one table; derive display strings with `Intl.NumberFormat` |
 | 5 | Item granted, then granted again | Idempotency keyed only on `event.id` | Also refuse any grant against a checkout already marked fulfilled |
 | 6 | Sandbox purchases appearing in production data | `isSandbox` delivered but not checked | Compare `isSandbox` against your own environment flag and ignore mismatches |

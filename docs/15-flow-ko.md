@@ -379,15 +379,13 @@ USD를 물릴 수 있습니다. 세금 관할과 결제수단이 전부 틀어�
 flowchart TD
     A["청구 국가 결정"] --> B{"cd_country 쿠키<br/>(사용자의 명시적 선택)"}
     B -->|"있음"| Z["결정"]
-    B -->|"없음"| C{"플랫폼 지리 헤더<br/>cf-ipcountry 등 4종"}
+    B -->|"없음"| C{"플랫폼 지리 헤더<br/>cf-ipcountry 등 4종<br/>TRUST_GEO_HEADERS=1일 때만"}
     C -->|"있음"| Z
-    C -->|"없음"| D{"Accept-Language의 지역 코드"}
-    D -->|"있음"| Z
-    D -->|"없음"| E["기본값 KR"]
+    C -->|"없음"| E["기본값 KR"]
     E --> Z
     Z --> F["marketFor(country) → 통화 결정"]
 
-    G["게임 UI 언어 (ko/en)"] -.->|"이 목록에 없음"| A
+    G["언어 신호<br/>게임 UI 토글 · Accept-Language"] -.->|"이 목록에 없음"| A
     style G fill:#f8d7da,stroke:#a94442
 ```
 

@@ -73,17 +73,24 @@ jurisdiction and decides which payment methods they are offered.
 Billing country is resolved **server-side**, in this precedence:
 
 1. an explicit player choice, stored in a cookie (the picker in the store modal);
-2. a platform geo header (`cf-ipcountry`, `x-vercel-ip-country`, …) when the
-   deployment provides one;
-3. the region subtag of the browser's `Accept-Language` (`ko-KR` → `KR`);
-4. `KR` as the default.
+2. a platform geo header (`cf-ipcountry`, `x-vercel-ip-country`, …), and only
+   where `TRUST_GEO_HEADERS=1` declares that a proxy sets them and strips the
+   client's own copy — otherwise the header is caller-supplied input;
+3. `KR` as the default.
 
-**The game's ko/en toggle is deliberately absent from that list, at any position.**
-An earlier draft derived country from the UI language, which declared a Korean
-player reading English to be in the US. The client no longer sends a country at
-all — a SKU and a display language, nothing else — so the conflation cannot be
-reintroduced from the browser. A regression test asserts that requesting the
-catalogue with `locale=en` leaves the resolved country at `KR`.
+**No language signal appears in that list, at any position.** An earlier draft
+derived country from the UI toggle, which declared a Korean player reading
+English to be in the US. The first correction replaced it with the region
+subtag of `Accept-Language`, which is the same mistake one layer down: a
+browser language is not a location, and with no CDN in front of the service it
+was in practice the *only* signal that fired, so an English browser in Seoul
+was billed as a US resident. `Accept-Language` now reaches Neon as
+`languageLocale` only. Where the player actually is should come from IP
+geolocation — Neon exposes localized pricing by IP — and that is not
+implemented here; until it is, the default market is the honest answer rather
+than a guess read off the request's language. Regression tests assert that
+`locale=en`, an `en-US` `Accept-Language`, and a forged `cf-ipcountry` on an
+untrusted deployment all leave the resolved country at `KR`.
 
 ## successUrl must be the player's own origin
 
@@ -134,8 +141,8 @@ and asserts:
 - the catalogue is localized and priced by the server, with the display string
   derived from the integer;
 - switching UI language does **not** move the billing country;
-- `Accept-Language` region and an explicit choice both resolve country, and an
-  unsupported country is rejected;
+- neither `Accept-Language` nor a forged geography header moves the billing
+  country, an explicit choice does, and an unsupported country is rejected;
 - a client-supplied `price`, `country`, and `currency` are all ignored;
 - a correctly signed `purchase.completed` is fulfilled;
 - the same event delivered twice grants once, and a *different* event pointing at
