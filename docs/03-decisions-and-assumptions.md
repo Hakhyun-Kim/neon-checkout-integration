@@ -77,30 +77,45 @@ Billing country is resolved **server-side**, in this precedence:
    where `TRUST_GEO_HEADERS=1` declares that a proxy sets them and strips the
    client's own copy — otherwise the header is caller-supplied input that lets
    any caller choose its own tax jurisdiction;
-3. the region subtag of the browser's `Accept-Language` (`en-US` → `US`);
-4. `KR` as the default.
+3. `KR` as the default.
 
-**The game's ko/en toggle is deliberately absent from that list, at any
-position.** An earlier draft derived country from the UI language, which
-declared a Korean player reading English to be in the US. The client no longer
-sends a country at all — a SKU and a display language, nothing else — so that
-conflation cannot be reintroduced from the browser.
+**No language signal appears in that list, at any position.** An earlier draft
+derived country from the game's ko/en toggle, which declared a Korean player
+reading English to be in the US. The first correction replaced it with the
+region subtag of `Accept-Language` — the same mistake one layer down. A browser
+language is not a location: `en-US` is what an English-configured machine sends
+from Seoul as readily as from Seattle, and on a deployment with no CDN in front
+of it that was the only inferred signal that ever fired, so it decided. The
+client no longer sends a country at all — a SKU and a display language, nothing
+else — and no inference reaches `playerCountry`.
 
-**Step 3 is a demo trade-off, and it is worth naming as one, because it is a
-weaker version of the same mistake.** A browser language is not a location:
-`en-US` is what an English-configured machine sends from Seoul as readily as
-from Seattle, and on this deployment — Cloud Run with no CDN in front, so no
-geo header ever arrives — it is the only inferred signal that ever fires. It
-declares a tax jurisdiction to a merchant of record on evidence that does not
-support the claim. It is kept because this build's first purpose is to be
-opened and bought from by a reviewer anywhere, who should meet a plausible
-currency without first finding the market picker; the picker overrides the
-inference and the choice persists. A production integration resolves location
-from IP — Neon exposes localized pricing by IP — and leaves `Accept-Language`
-to `languageLocale`. Regression tests cover both halves: an `en-US` browser
-resolves `US`, `ja-JP` falls through to the default, `locale=en` moves nothing,
-a forged `cf-ipcountry` is ignored until the deployment trusts its proxy, and
-an explicit selection outranks every inferred signal.
+### A weak signal may recommend a market; it may not declare one
+
+Removing the browser region outright costs something real: a visitor outside
+Korea meets KRW pricing and a foreign card before they find the market picker.
+That demand is legitimate, so the signal was kept and demoted. The catalogue
+response carries a `suggestion` built from the `Accept-Language` region, and the
+store renders it above the prices as a single sentence with one button — *"Your
+browser looks like US. Switch billing to USD?"* — annotated with why it is a
+question rather than a default: billing region sets tax and payment methods.
+Accepting it posts `/api/store/market`, which is the explicit selection from
+step 1, and the suggestion disappears. The suggestion is also suppressed
+whenever it agrees with the resolved market or the player has already chosen.
+
+The distinction is the point: an inference decides **what to offer**, a person
+decides **what is declared to a merchant of record**. Where the player actually
+is should come from IP — Neon exposes localized pricing by IP — and that is a
+deployment change rather than a code one: `deploy/README.md` carries the
+runbook for putting a geolocating proxy in front of the service, closing the
+direct path so the header cannot be forged, and verifying both halves;
+`deploy/cloud-run.sh --trust-geo-headers` flips the flag.
+
+Regression tests cover each edge: `locale=en` moves nothing, an `en-US` browser
+resolves `KR` and is offered `US`, a `ko-KR` browser is offered nothing,
+accepting the offer resolves `US` and silences it, a forged `cf-ipcountry` is
+ignored until the deployment trusts its proxy, and an explicit selection
+outranks every inferred signal. The flow was also walked in a browser: the
+prices move from ₩ to $ on the click, and back through the picker.
 
 ## successUrl must be the player's own origin
 
@@ -151,9 +166,9 @@ and asserts:
 - the catalogue is localized and priced by the server, with the display string
   derived from the integer;
 - switching UI language does **not** move the billing country;
-- switching UI language does not move the billing country, the `Accept-Language`
-  region and an explicit choice both resolve it, a forged geography header does
-  not until the deployment trusts its proxy, and an unsupported country is
+- no language signal moves the billing country, an explicit choice does, the
+  browser region only produces a suggestion, a forged geography header does
+  nothing until the deployment trusts its proxy, and an unsupported country is
   rejected;
 - a client-supplied `price`, `country`, and `currency` are all ignored;
 - a correctly signed `purchase.completed` is fulfilled;

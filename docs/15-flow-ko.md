@@ -381,15 +381,16 @@ flowchart TD
     B -->|"있음"| Z["결정"]
     B -->|"없음"| C{"플랫폼 지리 헤더<br/>cf-ipcountry 등 4종<br/>TRUST_GEO_HEADERS=1일 때만"}
     C -->|"있음"| Z
-    C -->|"없음"| D{"Accept-Language의 지역 코드<br/>데모용 타협 · 운영은 IP 지오"}
-    D -->|"있음"| Z
-    D -->|"없음"| E["기본값 KR"]
+    C -->|"없음"| E["기본값 KR"]
     E --> Z
     Z --> F["marketFor(country) → 통화 결정"]
 
+    D["Accept-Language의 지역 코드"] -.->|"국가를 정하지 못함<br/>스토어에 제안으로 표시"| S["플레이어가 클릭"]
+    S --> B
     G["게임 UI 언어 (ko/en)"] -.->|"이 목록에 없음"| A
     style G fill:#f8d7da,stroke:#a94442
     style D fill:#fff3cd,stroke:#8a6d3b
+    style S fill:#d4edda,stroke:#3c763d
 ```
 
 `locale`은 오직 **표시**에만 씁니다. 이 규칙에는 회귀 테스트가 붙어 있습니다.
