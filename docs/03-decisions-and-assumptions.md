@@ -103,7 +103,14 @@ step 1, and the suggestion disappears. The suggestion is also suppressed
 whenever it agrees with the resolved market or the player has already chosen.
 
 The distinction is the point: an inference decides **what to offer**, a person
-decides **what is declared to a merchant of record**. Where the player actually
+decides **what is declared to a merchant of record**. A country is never rewritten to
+reach a price, either: this catalogue prices two markets, and every other
+country is handled by **Neon's Global Store** in USD — `marketFor` falls back to
+a global USD market rather than to `KR`, so a player in Japan is declared `JP`
+with USD pricing instead of being declared Korean on the way to a price row.
+Only real country codes are accepted; the ISO user-assigned ranges (`AA`,
+`QM`-`QZ`, `XA`-`XZ`, `ZZ`) are refused, which is exactly what geolocation
+returns when it does not know — Cloudflare's `XX`, or `T1` for Tor. Where the player actually
 is should come from IP — Neon exposes localized pricing by IP — and that is a
 deployment change rather than a code one: `deploy/README.md` carries the
 runbook for putting a geolocating proxy in front of the service, closing the
